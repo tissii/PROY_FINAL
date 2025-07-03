@@ -128,36 +128,31 @@ Compara el porcentaje de estudiantes que aprueban (nota final suficiente) en fun
 
 <!-- -->
 
--    Los hijos de madres con educación primaria presentan la tasa más baja (**57.6%**).
+-   Los hijos de madres con educación primaria presentan la tasa más baja (**57.6%**).
 
 <!-- -->
 
--    Entre medias, los niveles de secundaria, 5to a 9no grado, y sin educación rondan entre **64% y 67%**, sin una diferencia notoria.
+-   Entre medias, los niveles de secundaria, 5to a 9no grado, y sin educación rondan entre **64% y 67%**, sin una diferencia notoria.
 
 <!-- -->
 
--    Llama la atención que el grupo “sin educación” **(66.7%**) no es el más bajo: supera a primaria y se parece a secundaria y 5to-9no grado.
+-   Llama la atención que el grupo “sin educación” **(66.7%**) no es el más bajo: supera a primaria y se parece a secundaria y 5to-9no grado.
 
 ```{r}
 #| fig-cap: "Clases extra pagas"
 #| out.width: 100%
 #| out-height: 50%
-datos |>
-  mutate(
-    Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
+datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
     paid = case_when(paid == 'yes' ~ 'Paga clases extra', 
-                     paid == 'no' ~ 'No paga clases extra')) |> 
-  group_by(paid) |>
+                     paid == 'no' ~ 'No paga clases extra')) |>  group_by(paid) |>
   summarise(aprobados = sum(Estado == "Aprobado"), total = n(),   porcentaje_aprobacion = aprobados / total * 100) |>
   ggplot(aes(x = paid, y = porcentaje_aprobacion, fill = paid)) +
   geom_col(alpha = 0.7) +
   geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
   scale_fill_brewer(palette = "Set2") +
   labs(title = 'Porcentaje de aprobación según clases extra',
-    x = 'Clases extra',
-    y = 'Porcentaje de aprobación') +
-  ylim(0, 100) +
-  theme_minimal() +
+       x = 'Clases extra',
+       y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() +
   theme(legend.position = "none")
 
 
@@ -169,7 +164,7 @@ Compara la tasa de aprobación de estudiantes que **pagan clases extra** frente 
 
 <!-- -->
 
--    Los que no pagan clases extra tienen una tasa de aprobación de **63.1%**.
+-   Los que no pagan clases extra tienen una tasa de aprobación de **63.1%**.
 
 Los estudiantes que reciben clases extra tienen más probabilidades de aprobar que quienes no lo hacen. Este resultado respalda la idea de que el refuerzo académico adicional (clases particulares o tutorías) tiene un impacto positivo en el rendimiento escolar.
 
@@ -199,7 +194,7 @@ Compara la tasa de aprobación de estudiantes con acceso a internet en casa fren
 
 <!-- -->
 
--    Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
+-   Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
 
 Esto concluye a que tener acceso a internet está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
 
@@ -224,26 +219,29 @@ theme(legend.position = "none") +
 Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de G1, G2 y G3 son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio dramático (ni mejora ni empeoramiento fuerte) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (G1 y G2) pueden predecir bastante bien la nota final (G3).
 
 ```{r}
+#| fig-cap: "Box plot de nota final segun tiempo de estudio"
+#| out.width: 100%
+#| out-height: 50%
 datos |>
-  mutate(
-    studytime_label = factor(studytime, levels = 1:4, labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
+  mutate(studytime_label = factor(studytime, levels = 1:4,
+                                  labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
   ggplot(aes(x = studytime_label, y = G3, fill = studytime_label)) +
-  geom_boxplot(alpha=0.8) +
-  labs(
-    title = "Nota final (G3) según tiempo de estudio semanal",
+  geom_boxplot(alpha = 0.8) +
+  labs(title = "Nota final (G3) según tiempo de estudio semanal",
     x = "Tiempo de estudio",
     y = "Nota final",
     fill = "Tiempo de estudio") +
   theme_minimal() +
-  scale_fill_brewer(palette = "Pastel2")+
+  scale_fill_brewer(palette = "Pastel2") +
   theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
+
 ```
 
 Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Ademas, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
-#| fig-cap: "Relacion entre G2/G1y G3"
+#| fig-cap: "Relacion entre G1/G2 y G3"
 #| out.width: 100%
 #| out-height: 50%
 ggplot(datos, aes(x=G1, y=G3)) +
@@ -263,19 +261,15 @@ ggplot(datos, aes(x=G2, y=G3)) +
 Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` es una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
 
 ```{r}
-library(ggplot2)
+#| fig-cap: "Violin plot de nota final segun cantidad de cursos reprobados"
+#| out.width: 100%
+#| out-height: 50%
 
-ggplot(datos, aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) +
-  geom_violin(trim = FALSE, alpha = 0.7) +
-  labs(
-    title = "Distribución de la nota final (G3) según cantidad de cursos reprobados",
-    x = "Cantidad de cursos reprobados (failures)",
-    y = "Nota final"
-  ) +
+datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) + geom_violin(trim = FALSE, alpha = 0.7) +
+  labs(title = "Distribución de la nota final (G3) según cantidad de cursos reprobados", x = "Cantidad de cursos reprobados (failures)", y = "Nota final") +
   scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
-  theme(legend.position = "none")
-
+  theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
 
 ```
 
@@ -286,3 +280,52 @@ Students with no course failures (failures = 0) have higher final point concentr
 Para las puntuaciones de failure = 2 o 3, el señalización es esencialmente más disperasdispersas y estí hasta las notas bajaeven con una pila de valores a aproximadamente 0.
 
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
+
+```{r}
+#| fig-cap: "Violin plot de nota final segun tiempo de viaje"
+#| out.width: 100%
+#| out-height: 50%
+
+ datos |>
+  mutate(traveltime = case_when(traveltime == 1 ~ '<15 min',
+                                traveltime == 2 ~ '15-30 min',
+                                traveltime == 3 ~ '30-60 min',
+                                traveltime == 4 ~ '>1 hora'), 
+         traveltime = factor(traveltime, levels = c('<15 min', '15-30 min', '30-60 min', '>1 hora'))) |> ggplot(aes(x = traveltime, y = G3, fill = traveltime)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  labs(title = 'Distribución de la nota final (G3) según tiempo de viaje a la escuela', x = 'Tiempo de viaje', y = 'Nota final') +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal() +
+  theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
+
+
+```
+
+Los estudiantes con tiempos de viaje menores a 15 minutos, entre 15-30 minutos y entre 30-60 minutos presentan distribuciones de notas relativamente amplias y centradas alrededor de la media (aproximadamente entre 10 y 12). Esto significa que estos tiempos de viaje no se relacionan de forma fuerte o directa con grandes diferencias en el rendimiento académico.\
+
+Los estudiantes con tiempos de viaje mayores a 1 hora muestran una distribución más estrecha y concentrada en torno a notas cercanas a 10, con menor dispersión y una leve tendencia a agruparse en calificaciones más bajas que los grupos con viajes más cortos. Esto podría indicar que los tiempos de viaje muy largos se asocian con un rendimiento algo más bajo o con menor variabilidad (menos probabilidad de alcanzar notas muy altas).\
+
+Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan distribuciones más amplias en las notas altas (15-20). Esto podría sugerir que estudiantes con trayectos más cortos pueden llegar a tener mayores posibilidades de obtener calificaciones más altas, quizás porque les queda más tiempo para estudiar o porque el trayecto es menos agotador y están mas descansados en clase.
+
+Estas conclusiones nos generó una nueva pregunta; ¿Más tiempo de viaje es indicador de mayor cantidad de faltas?
+
+```{r}
+#| fig-cap: "Violin plot de ausencias (escala log) segun tiempo de viaje"
+#| out.width: 100%
+#| out-height: 50%
+ datos |>  mutate(traveltime = case_when(traveltime == 1 ~ '<15 min',
+                                             traveltime == 2 ~ '15-30 min',
+                                             traveltime == 3 ~ '30-60 min',
+                                             traveltime == 4 ~ '>1 hora'),traveltime = factor(traveltime, levels = c("<15 min", "15-30 min", "30-60 min", ">1 hora"))) |> 
+ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  labs(title = "Distribución de ausencias según tiempo de viaje",
+       x = "Tiempo de viaje",
+       y = "Número de ausencias en logaritmo") +
+  scale_y_continuous(trans = "log10")+
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal() +
+  theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
+```
+
+El grafico de violin nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 min, entre 15–30 min, entre 30–60 min y más de 1 hora. A grande escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece mas ancho en la parte superior del violin, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersion. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusion, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
