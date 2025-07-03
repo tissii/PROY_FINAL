@@ -56,11 +56,11 @@ Socioeconomic Variables: extracurricular activities, education support, drinking
 
 Este grado de precisión ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita la uso de las técnicas del análisis exploratorio y el modelado estadístico.
 
-La variable G3 es la nota final anual. Mientras que G1 y G2 corresponden a las notas de primer y segundo período respectivamente.
+La variable `G3` es la nota final anual. Mientras que `G1` y `G2` corresponden a las notas de primer y segundo período respectivamente.
 
 Para el mejor entendimiento de las variable de calificaciones se deja breve explicacion del funcionamiendo del sistema de evaluacion en portugal:
 
-En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, de donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables G1, G2 y G3, correspondientes a calificación del primer semestre, del segundo semestre y a la calificación del cierre del curso, correspondientemente.
+En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, de donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer semestre, del segundo semestre y a la calificación del cierre del curso, correspondientemente.
 
 Es importante tener en cuenta que, para obtener una nota final válida, el estudiante debe cumplir con varios, requisitos académicos como asistir a clases y presentarse a las evaluaciones correspondientes. En caso de incumplimiento, abandono del curso o ausencia en el examen final, se asigna automáticamente una calificación de 0 como nota final, independientemente de las calificaciones obtenidas en los períodos anteriores.
 
@@ -203,7 +203,7 @@ theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de G1, G2 y G3 son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio dramático (ni mejora ni empeoramiento fuerte) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (G1 y G2) pueden predecir bastante bien la nota final (G3).
+Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio dramático (ni mejora ni empeoramiento fuerte) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
 
 ```{r}
 #| fig-cap: "Box plot de nota final segun tiempo de estudio"
@@ -342,10 +342,14 @@ modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurit
 modelo |> vip()
 ```
 
+A continuación un pantallazo de la tabla de predicción:
+
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
 resultados |> head()
 ```
+
+Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=G3, estimate=.pred)
@@ -368,10 +372,14 @@ modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurit
 modelo |> vip()
 ```
 
+A continuación un pantallazo de la tabla de predicción:
+
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
 resultados |> head()
 ```
+
+Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=G3, estimate=.pred)
@@ -395,12 +403,14 @@ modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurit
 modelo |> vip()
 ```
 
- 
+ A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
 resultados |> head()
 ```
+
+Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
@@ -412,6 +422,8 @@ Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisi�
 Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respuesta siendo binaria (aprobado/no aprobado).
 
 ```{r}
+#| out.width: 100%
+#| out-height: 50%
 set.seed(100725)
 datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Estado=as.factor(Estado)) |> select(-G3) 
 split = initial_split(datos3, prop = 0.8, strata=Estado)
@@ -422,20 +434,32 @@ modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurit
 modelo |> vip()
 ```
 
+A continuación un pantallazo de la tabla de predicción:
+
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
 resultados |> head()
 ```
+
+Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
 metricas
 ```
 
-Vemos que el modelo mejora notablemente de nuevo, pasa a una precision de 90% y estima aproximadamente 9 de cada 10 casos correctamente.
+Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90 % y estimando correctamente aproximadamente 9 de cada 10 casos.
 
-Hay algo que en todos los modelos coincide, que es que las variables más importantes para predecir la nota final, sin tener en cuenta `G1` y `G2`, son:
+Hay algo que se observa de forma consistente en todos los modelos: las variables más importantes para predecir la nota final, sin considerar `G1` y `G2`, son principalmente:
 
--   Failure: Número de cursos reprobados previamente (0, 1, 2, 3, 4 que serian 4 o +)
+-   `failures`: número de cursos reprobados previamente (valores de 0, 1, 2, 3 o 4; donde 4 indica cuatro o más cursos reprobados).
 
--   Absences - Número de inasistencias (de 0 a 93)
+-   `absences`: número de inasistencias registradas (de 0 a 93).
+
+-   `goout` y `age`: estas variables suelen intercambiarse en el ranking de importancia según el modelo. `goout` indica la frecuencia de salidas con amigos (de 1 = muy baja a 5 = muy alta), mientras que `age` corresponde a la edad del estudiante (de 15 a 22 años).
+
+# Aplicación Shiny:
+
+Para complementar el análisis, se diseñó una aplicación Shiny que permite visualizar los principales resultados del análisis exploratorio de forma interactiva. La aplicación organiza la información en tres pestañas: la primera muestra gráficos de barras, la segunda contiene boxplots y la tercera presenta gráficos de violín, todo esto para brindar una perspectiva más detallada de la distribución de las variables.
+
+El código de la app shiny se encuentra en el repositorio como \<\<app shiny\>\> y aquí está el link.
