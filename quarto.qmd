@@ -66,6 +66,8 @@ Es importante tener en cuenta que, para obtener una nota final válida, el estud
 
 # Análisis Exploratorio:
 
+El objetivo de este análisis exploratorio es determinar si las variables que, en un primer momento, seleccionamos por considerarlas explicativas de la nota final (G3), realmente cumplen con esa función.
+
 ```{r}
 #| fig-cap: "Estudiantes aprobados vs no aprobados"
 #| out.width: 100%
@@ -84,7 +86,7 @@ Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los
 #| fig-cap: "Sexo"
 #| out.width: 100% 
 #| out-height: 50%
-datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"),                               total = n(),                              porcentaje = aprobados / total * 100)|>   ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) +   geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo",     x = "Sexo",     y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"),                               total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
 
 ```
 
@@ -245,7 +247,7 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
-Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` es una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
+Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **indica que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`. Por este motivo, **decidimos no incluir** `G1` y `G2` como variables explicativas al construir el modelo, además, en la misma página del dataset dice: *'It is more difficult to predict G3 without G2 and `G1`, but **such prediction is much more useful**'*. En base a esto, optamos por evaluar únicamente otras variables para explicar la nota final.
 
 ```{r}
 #| fig-cap: "Violin plot de nota final segun cantidad de cursos reprobados"
@@ -315,4 +317,125 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece mas ancho en la parte superior del violín, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece haber mas densidad en la parte superior del violín, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+
+# Modelo:
+
+Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`) y usaremos como variables predictoras todas menos `G1` y `G2`.
+
+El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor.
+
+```{r}
+#| out.width: 100%
+#| out-height: 50%
+library(rsample)
+library(tidymodels)
+library(ranger)
+library(vip)
+datos2 = datos |> select(-G1,-G2)
+set.seed(100725)
+split = initial_split(datos2, prop = 0.8)
+train = training(split)
+test = testing(split)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
+  set_mode("regression") |> fit(G3 ~ ., data = train)
+modelo |> vip()
+```
+
+```{r}
+resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
+resultados |> head()
+```
+
+```{r}
+metricas = metrics(resultados, truth=G3, estimate=.pred)
+metricas
+```
+
+El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que confirma que, sin considerar `G1` y `G2`, la capacidad predictiva de las demás variables no es muy buena. Este resultado coincide con el comentario de la página original del dataset, que señala que la nota final (`G3`) depende en gran parte de los parciales anteriores.
+
+A continuacion haremos un modelo teniendo en cuenta `G1` y `G2`.
+
+```{r}
+#| out.width: 100%
+#| out-height: 50%
+set.seed(100725)
+split = initial_split(datos, prop = 0.8)
+train = training(split)
+test = testing(split)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
+  set_mode("regression") |> fit(G3 ~ ., data = train)
+modelo |> vip()
+```
+
+```{r}
+resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
+resultados |> head()
+```
+
+```{r}
+metricas = metrics(resultados, truth=G3, estimate=.pred)
+metricas
+```
+
+El incremento del `R²` de 0.176 a 0.815 muestra claramente que `G1` y `G2` concentran casi todo el poder predictivo del modelo. Sin ellas, las variables restantes no logran predecir la nota final (`G3`) de forma adecuada.
+
+Para indagar un poco más, crearemos otro modelo de random forest pero ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos) y nuestro modelo pasará ahora a un random forest de clasificación.
+
+```{r}
+#| out.width: 100%
+#| out-height: 50%
+set.seed(100725)
+datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Estado=as.factor(Estado)) |> select(-G1, -G2, -G3) 
+split = initial_split(datos3, prop = 0.8, strata=Estado)
+train = training(split)
+test = testing(split)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
+  set_mode("classification") |> fit(Estado ~ ., data = train)
+modelo |> vip()
+```
+
+ 
+
+```{r}
+resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
+resultados |> head()
+```
+
+```{r}
+metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
+metricas
+```
+
+Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisión del 73 %. Al transformar el problema en uno de clasificación binaria (Aprobado/No aprobado), el modelo logra una capacidad predictiva considerablemente mejor (aproximadamente 7 de cada 10 son predecidas correctamente).
+
+Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respuesta siendo binaria (aprobado/no aprobado).
+
+```{r}
+set.seed(100725)
+datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Estado=as.factor(Estado)) |> select(-G3) 
+split = initial_split(datos3, prop = 0.8, strata=Estado)
+train = training(split)
+test = testing(split)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
+  set_mode("classification") |> fit(Estado ~ ., data = train)
+modelo |> vip()
+```
+
+```{r}
+resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
+resultados |> head()
+```
+
+```{r}
+metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
+metricas
+```
+
+Vemos que el modelo mejora notablemente de nuevo, pasa a una precision de 90% y estima aproximadamente 9 de cada 10 casos correctamente.
+
+Hay algo que en todos los modelos coincide, que es que las variables más importantes para predecir la nota final, sin tener en cuenta `G1` y `G2`, son:
+
+-   Failure: Número de cursos reprobados previamente (0, 1, 2, 3, 4 que serian 4 o +)
+
+-   Absences - Número de inasistencias (de 0 a 93)
