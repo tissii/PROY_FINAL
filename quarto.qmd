@@ -218,3 +218,5 @@ ggplot(datos, aes(x=G2, y=G3)) +
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
 Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` podría ser una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
+
+lol
