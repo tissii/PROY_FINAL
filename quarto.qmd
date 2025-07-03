@@ -223,4 +223,27 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` podría ser una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
 
-lol
+```{r}
+library(ggplot2)
+
+ggplot(datos, aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  labs(
+    title = "Distribución de la nota final (G3) según cantidad de cursos reprobados",
+    x = "Cantidad de cursos reprobados (failures)",
+    y = "Nota final"
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+```
+
+En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (G3) tiende a bajar.
+
+Students with no course failures (failures = 0) have higher final point concentrations with a density concentrated around 10-15. For failures = 0, the density is most concentrated and most students lie above the 10.
+
+Para las puntuaciones de failure = 2 o 3, el señalización es esencialmente más disperasdispersas y estí hasta las notas bajaeven con una pila de valores a aproximadamente 0.
+
+El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
