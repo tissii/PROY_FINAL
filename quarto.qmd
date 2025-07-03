@@ -264,7 +264,7 @@ En este grafico de violin podemos observar conclusiones claras: A medida que aum
 
 Los estudiantes sin cursos desaprobados (failures = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
 
-Para las puntuaciones de failure = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidad de no aprobar.
+Para las puntuaciones de failure = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidadkmln de no aprobar.
 
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
 
