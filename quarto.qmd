@@ -125,17 +125,8 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
 Compara el porcentaje de estudiantes que aprueban (nota final suficiente) en función del nivel educativo alcanzado por la madre.
 
 -   Los hijos de madres con educación superior tienen la tasa de aprobación más alta (**74.8%**).
-
-<!-- -->
-
 -   Los hijos de madres con educación primaria presentan la tasa más baja (**57.6%**).
-
-<!-- -->
-
 -   Entre medias, los niveles de secundaria, 5to a 9no grado, y sin educación rondan entre **64% y 67%**, sin una diferencia notoria.
-
-<!-- -->
-
 -   Llama la atención que el grupo “sin educación” **(66.7%**) no es el más bajo: supera a primaria y se parece a secundaria y 5to-9no grado.
 
 ```{r}
