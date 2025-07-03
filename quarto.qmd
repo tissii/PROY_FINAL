@@ -78,7 +78,7 @@ datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
   theme(legend.position = "none")
 ```
 
-Compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (**G3**). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
+Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (**G3**). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
 
 ```{r}
 #| fig-cap: "Sexo"
@@ -88,7 +88,7 @@ datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mu
 
 ```
 
-Compara el porcentaje de estudiantes aprobados según su sexo: femenino y masculino.
+Esta visualización muestra el porcentaje de estudiantes aprobados según su sexo: femenino o masculino.
 
 En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobación más alta que las estudiantes femeninas.
 
@@ -149,12 +149,9 @@ datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
 
 ```
 
-Compara la tasa de aprobación de estudiantes que **pagan clases extra** frente a quienes no lo hacen.
+Aqui podemos visualizar la tasa de aprobación de estudiantes segun si **pagan clases extra** o no.
 
 -   Los estudiantes que pagan clases extra tienen una tasa de aprobación de **71.8%**.
-
-<!-- -->
-
 -   Los que no pagan clases extra tienen una tasa de aprobación de **63.1%**.
 
 Los estudiantes que reciben clases extra tienen más probabilidades de aprobar que quienes no lo hacen. Este resultado respalda la idea de que el refuerzo académico adicional (clases particulares o tutorías) tiene un impacto positivo en el rendimiento escolar.
@@ -179,12 +176,9 @@ datos |>
 
 ```
 
-Compara la tasa de aprobación de estudiantes con acceso a internet en casa frente a aquellos que no tienen acceso.
+Este gráfico compara la tasa de aprobación de estudiantes con acceso a internet en casa frente a aquellos que no tienen acceso.
 
 -   Los estudiantes con internet tienen una tasa de aprobación de **68.4%**.
-
-<!-- -->
-
 -   Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
 
 Esto concluye a que tener acceso a internet está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
@@ -268,9 +262,9 @@ datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures)
 
 En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (G3) tiende a bajar.
 
-Students with no course failures (failures = 0) have higher final point concentrations with a density concentrated around 10-15. For failures = 0, the density is most concentrated and most students lie above the 10.
+Los estudiantes sin cursos desaprobados (failures = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
 
-Para las puntuaciones de failure = 2 o 3, el señalización es esencialmente más disperasdispersas y estí hasta las notas bajaeven con una pila de valores a aproximadamente 0.
+Para las puntuaciones de failure = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidad de no aprobar.
 
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
 
@@ -321,4 +315,4 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-El grafico de violin nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 min, entre 15–30 min, entre 30–60 minutos y más de 1 hora. A grande escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece mas ancho en la parte superior del violin, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersion. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusion, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece mas ancho en la parte superior del violín, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
