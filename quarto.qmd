@@ -78,22 +78,21 @@ datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
   theme(legend.position = "none")
 ```
 
+Compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (**G3**). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
+
 ```{r}
 #| fig-cap: "Sexo"
-#| out.width: 100%
+#| out.width: 100% 
 #| out-height: 50%
-datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
-  group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), 
-                             total = n(),
-                             porcentaje = aprobados / total * 100)|>
-  ggplot(aes(x = sex, y = porcentaje, fill = sex)) +
-  geom_col(alpha = 0.7) +
-  geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +
-  scale_fill_brewer(palette = "Set2") +
-  labs(title = "Porcentaje de aprobación por sexo",
-    x = "Sexo",
-    y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"),                               total = n(),                              porcentaje = aprobados / total * 100)|>   ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) +   geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo",     x = "Sexo",     y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+
 ```
+
+Compara el porcentaje de estudiantes aprobados según su sexo: femenino y masculino.
+
+En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobación más alta que las estudiantes femeninas.
+
+**70.6%** de los estudiantes masculinos aprueban, mientras que **63.9%** de las estudiantes femeninas aprueban.
 
 ```{r}
 #| fig-cap: "Educacion de la madre"
@@ -122,6 +121,8 @@ datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mu
   ylim(0, 100) +
   theme(legend.position = "none")
 ```
+
+Compara el porcentaje de estudiantes que aprueban (nota final suficiente) en función del nivel educativo alcanzado por la madre.
 
 ```{r}
 #| fig-cap: "Clases extra pagas"
@@ -221,7 +222,7 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
-Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` podría ser una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
+Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` es una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
 
 ```{r}
 library(ggplot2)
