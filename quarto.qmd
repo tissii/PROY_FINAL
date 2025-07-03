@@ -439,3 +439,28 @@ Hay algo que en todos los modelos coincide, que es que las variables más import
 -   Failure: Número de cursos reprobados previamente (0, 1, 2, 3, 4 que serian 4 o +)
 
 -   Absences - Número de inasistencias (de 0 a 93)
+
+## Comentarios finales Principales conclusiones
+
+**Relación entre calificaciones parciales y finales**\
+En primer lugar, confirmamos que las calificaciones parciales (G1 y G2) explican gran parte del rendimiento final (G3). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de R^2^ sin G1 y G2, el modelo apenas alcanza un R^2^ de 0,18 mientras que al incluirlas sube a 0,81, lo que demuestra su gran peso explicativo.
+
+**Factores de apoyo académico y contexto familiar**\
+Detectamos que ciertas variables como pagar clases particulares, tener acceso a internet en casa y el nivel educativo de la madre están asociadas a una mayor probabilidad de aprobación. Por ejemplo, los estudiantes que reciben clases extra tienen una tasa de aprobación del 71,8% frente al 63,1% de quienes no lo hacen. De forma similar, quienes cuentan con internet presentan mejores resultados (68,4% frente a 60,6%) y los hijos de madres con educación superior superan claramente a aquellos con madres con nivel primario (74,8% frente a 57,6%).
+
+**Historial académico y desempeño**\
+El número de cursos reprobados previamente resulta ser un fuerte indicador de bajo rendimiento final. A mayor cantidad de asignaturas desaprobadas, menor es la probabilidad de obtener una nota suficiente.
+
+**Factores logísticos**\
+El tiempo de viaje hasta la escuela también muestra cierta relación indirecta: quienes recorren más de una hora tienden a tener más faltas y rendimientos algo más bajos. Los estudiantes con trayectos más cortos suelen tener mejor desempeño y menor ausentismo, probablemente por disponer de más tiempo para estudiar y llegar menos fatigados.
+
+**Mejora del modelo al usar clasificación binaria**\
+Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permitió mejorar la precisión. Sin G1 y G2, la precisión alcanzó un 73%, mientras que al incluirlas se elevó a un 90%, lo que refuerza su relevancia.
+
+## Posibles lineas de trabajo futuras:
+
+**Analizar la calidad del estudio:** profundizar en cómo influyen no solo las horas de estudio, sino la forma en que se organiza y la calidad del apoyo recibido.
+
+**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar como la calidad docente, infraestructura, recursos. También aspectos psicológicos comomotivación, estrés del estudiante.
+
+**Realizar estudios mas extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
