@@ -127,22 +127,17 @@ datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mu
 #| fig-cap: "Clases extra pagas"
 #| out.width: 100%
 #| out-height: 50%
-datos |>
-  mutate(
-    Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
+datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
     paid = case_when(paid == 'yes' ~ 'Paga clases extra', 
-                     paid == 'no' ~ 'No paga clases extra')) |> 
-  group_by(paid) |>
+                     paid == 'no' ~ 'No paga clases extra')) |>  group_by(paid) |>
   summarise(aprobados = sum(Estado == "Aprobado"), total = n(),   porcentaje_aprobacion = aprobados / total * 100) |>
   ggplot(aes(x = paid, y = porcentaje_aprobacion, fill = paid)) +
   geom_col(alpha = 0.7) +
   geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
   scale_fill_brewer(palette = "Set2") +
   labs(title = 'Porcentaje de aprobación según clases extra',
-    x = 'Clases extra',
-    y = 'Porcentaje de aprobación') +
-  ylim(0, 100) +
-  theme_minimal() +
+       x = 'Clases extra',
+       y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() +
   theme(legend.position = "none")
 
 
@@ -190,15 +185,13 @@ Al observar la primera gráfica, vemos que la mediana y la distribución de las 
 #| out.width: 100%
 #| out-height: 50%
 datos |>
-  mutate(
-    studytime_label = factor(studytime, levels = 1:4, labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
+  mutate(studytime_label = factor(studytime, levels = 1:4, labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
   ggplot(aes(x = studytime_label, y = G3, fill = studytime_label)) +
   geom_boxplot(alpha=0.9) +
-  labs(
-    title = "Nota final (G3) según tiempo de estudio semanal",
-    x = "Tiempo de estudio",
-    y = "Nota final",
-    fill = "Tiempo de estudio") + theme_minimal() +
+  labs(title = "Nota final (G3) según tiempo de estudio semanal",
+       x = "Tiempo de estudio",
+       y = "Nota final",
+       fill = "Tiempo de estudio") + theme_minimal() +
   scale_fill_brewer(palette = "Pastel2")+
   theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
@@ -231,17 +224,11 @@ Se observa una relación lineal positiva clara entre la primera calificación pa
 #| out.width: 100%
 #| out-height: 50%
 
-ggplot(datos, aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) +
-  geom_violin(trim = FALSE, alpha = 0.7) +
-  labs(
-    title = "Distribución de la nota final (G3) según cantidad de cursos reprobados",
-    x = "Cantidad de cursos reprobados (failures)",
-    y = "Nota final"
-  ) +
+datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) + geom_violin(trim = FALSE, alpha = 0.7) +
+  labs(title = "Distribución de la nota final (G3) según cantidad de cursos reprobados", x = "Cantidad de cursos reprobados (failures)", y = "Nota final") +
   scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
-
 
 ```
 
