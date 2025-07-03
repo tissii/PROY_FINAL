@@ -1,0 +1,220 @@
+---
+title: "Desempeño estudiantil"
+author: "Gastón Barcelo, Tisiana Franco, Agustín Macció"
+format: pdf
+execute:
+  echo: false
+  warning: false
+lang: es
+fig-format: retina
+fig-height: 4
+fig-width: 6
+---
+
+## 
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(readxl)
+library(forcats)
+library(knitr)
+library(RColorBrewer)
+```
+
+# Introducción:
+
+Este trabajo tiene como objetivo investigar los factores que influyen en el rendimiento académico de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
+
+El [dataset](https://archive.ics.uci.edu/dataset/320/student+performance) recopila información detallada sobre el rendimiento de alumnos de dos escuelas secundarias en Portugal, considerando diversas variables. El archivo original se divide en dos partes: una que contiene datos de la asignatura de Matemáticas y otra de Lengua Portuguesa. En este estudio, nos enfocaremos únicamente en el análisis del desempeño en Matemáticas.
+
+A partir de este caso especifico, buscamos identificar posibles relaciones entre características personales, familiares y escolares y las calificaciones finales, sin la intención de generalizar los resultados más allá de este contexto particular. Para ello, se emplearán técnicas de análisis exploratorio de datos y se construirá un modelo estadístico que permita predecir la nota final de los estudiantes. Finalmente, se desarrollará una aplicación Shiny para presentar de manera interactiva los resultados más relevantes.
+
+Esperamos que este trabajo sirva como un ejemplo de la aplicación de herramientas de ciencia de datos en el ámbito educativo y como un punto de partida para reflexionar sobre factores que podrían ser significativos en contextos similares.
+
+# Datos:
+
+```{r}
+datos <- read_csv2("student-mat.csv")
+glimpse(datos)
+```
+
+El dataset utilizado aquí procede del **UCI Machine Learning Repository**, un sitio web científico respetado donde se almacenan datasets con el propósito de uso en el proceso de enseñanza e investigaciones en aprendizaje automático en estadística.
+
+El archivo seleccionado corresponde a información recopilada en dos escuelas secundarias portuguesas, específicamente sobre estudiantes de la asignatura de Matemáticas. El dataset contiene un total de **395 observaciones**, cada una correspondiente a un estudiante individual.
+
+En total se incluyen **33 variables**, que abarcan características académicas, personales, familiares y sociales. Entre ellas se encuentran variables como:
+
+Información demográfica: edad, género, dirección.
+
+Contexto familiar: nivel educacional de los padres, categoría laboral de los padres, relación familiar.
+
+Academic aspects: study time, absences, partial and final grades.
+
+Socioeconomic Variables: extracurricular activities, education support, drinking behavior, among others.
+
+Este grado de precisión ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita la uso de las técnicas del análisis exploratorio y el modelado estadístico.
+
+La variable G3 es la nota final anual. Mientras que G1 y G2 corresponden a las notas de primer y segundo período respectivamente.
+
+Para el mejor entendimiento de las variable de calificaciones se deja breve explicacion del funcionamiendo del sistema de evaluacion en portugal:
+
+En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, de donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables G1, G2 y G3, correspondientes a calificación del primer semestre, del segundo semestre y a la calificación del cierre del curso, correspondientemente.
+
+Es importante tener en cuenta que, para obtener una nota final válida, el estudiante debe cumplir con varios, requisitos académicos como asistir a clases y presentarse a las evaluaciones correspondientes. En caso de incumplimiento, abandono del curso o ausencia en el examen final, se asigna automáticamente una calificación de 0 como nota final, independientemente de las calificaciones obtenidas en los períodos anteriores.
+
+# Análisis Exploratorio:
+
+```{r}
+#| fig-cap: "Estudiantes aprobados vs no aprobados"
+#| out.width: 100%
+#| out-height: 50%
+datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
+    ggplot(aes(x = Estado, fill = Estado)) + geom_bar(alpha = 0.7) +
+    geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) + scale_fill_brewer(palette = "Set2")+ labs(title = "Estudiantes aprobados vs no aprobados", x = "Estado", y = "Cantidad") +
+    theme_minimal() +
+   ylim(0, 300) +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| fig-cap: "Sexo"
+#| out.width: 100%
+#| out-height: 50%
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
+  group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), 
+                             total = n(),
+                             porcentaje = aprobados / total * 100)|>
+  ggplot(aes(x = sex, y = porcentaje, fill = sex)) +
+  geom_col(alpha = 0.7) +
+  geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Porcentaje de aprobación por sexo",
+    x = "Sexo",
+    y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+```
+
+```{r}
+#| fig-cap: "Educacion de la madre"
+#| out.width: 100%
+#| out-height: 50%
+ datos |> mutate(Medu= case_when(Medu=='0'~'No educacion',
+                                 Medu=='1'~'Edu. primaria',
+                                 Medu== '2'~ 'De 5to a 9no grado', 
+                                 Medu=='3'~'Edu. Secundaria', 
+                                 Medu=='4'~'Edu. superior')) |>
+  mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
+  group_by(Medu) |>
+  summarise(aprobados = sum(Estado == "Aprobado"),
+    total = n(),
+    porcentaje = aprobados / total * 100) |>
+  mutate(Medu = fct_reorder(Medu, porcentaje, .desc = FALSE)) |> 
+  ggplot(aes(x = Medu, y = porcentaje, fill = Medu)) +
+  geom_col(alpha = 0.7) +
+  geom_text(aes(label = paste0(round(porcentaje, 1), "%")),
+    vjust = -0.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Porcentaje de aprobación segun nivel educativo de la madre",
+    x = "Nivel educativo de la madre",
+    y = "Porcentaje de aprobación") +
+  theme_minimal() + theme(axis.title.x = element_text(margin = margin(t = 10))) +
+  ylim(0, 100) +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| fig-cap: "Clases extra pagas"
+#| out.width: 100%
+#| out-height: 50%
+datos |>
+  mutate(
+    Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
+    paid = case_when(paid == 'yes' ~ 'Paga clases extra', 
+                     paid == 'no' ~ 'No paga clases extra')) |> 
+  group_by(paid) |>
+  summarise(aprobados = sum(Estado == "Aprobado"), total = n(),   porcentaje_aprobacion = aprobados / total * 100) |>
+  ggplot(aes(x = paid, y = porcentaje_aprobacion, fill = paid)) +
+  geom_col(alpha = 0.7) +
+  geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = 'Porcentaje de aprobación según clases extra',
+    x = 'Clases extra',
+    y = 'Porcentaje de aprobación') +
+  ylim(0, 100) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+```
+
+```{r}
+#| fig-cap: "Acceso a internet"
+#| out.width: 100%
+#| out-height: 50%
+datos |>
+  mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
+    internet = case_when(
+      internet == 'yes' ~ 'Tiene internet',
+      internet == 'no' ~ 'No tiene internet')) |> group_by(internet) |>
+  summarise(aprobados = sum(Estado == "Aprobado"), total = n(),
+            porcentaje_aprobacion = aprobados / total * 100) |>
+  ggplot(aes(x = internet, y = porcentaje_aprobacion, fill = internet)) +
+  geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = 'Porcentaje de aprobación según acceso a internet',
+    x = 'Tiene acceso a internet',
+    y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() + theme(axis.title.x = element_text(margin = margin(t = 10))) + theme(legend.position = "none")
+
+```
+
+```{r}
+#| fig-cap: "Box plot de clasificacion por periodo"
+#| out.width: 100%
+#| out-height: 50%
+datos |>
+    pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
+    labs(title = "Distribución de calificaciones por período",
+         x = "Período",
+         y = "Nota") + theme_minimal()+ stat_summary(fun = mean, 
+                                  geom = "point",
+                                  shape = 20, size = 3, 
+                                  color = "black")+
+theme(legend.position = "none") +theme(axis.title.x = element_text(margin = margin(t = 10)))
+```
+
+```{r}
+datos |>
+  mutate(
+    studytime_label = factor(studytime, levels = 1:4, labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
+  ggplot(aes(x = studytime_label, y = G3, fill = studytime_label)) +
+  geom_boxplot(alpha=0.9) +
+  labs(
+    title = "Nota final (G3) según tiempo de estudio semanal",
+    x = "Tiempo de estudio",
+    y = "Nota final",
+    fill = "Tiempo de estudio") + theme_minimal() +
+  scale_fill_brewer(palette = "Pastel2")+
+  theme(legend.position = "none") +
+  theme(axis.title.x = element_text(margin = margin(t = 10)))
+```
+
+```{r}
+#| fig-cap: "Relacion entre G2/G1y G3"
+#| out.width: 100%
+#| out-height: 50%
+ggplot(datos, aes(x=G1, y=G3)) +
+    geom_point(alpha=0.6) +
+    geom_smooth(method="lm") +
+    labs(title="Relación entre primera nota (G1) y nota final (G3)",
+         x="G1", y="G3")
+ggplot(datos, aes(x=G2, y=G3)) +
+    geom_point(alpha=0.6) +
+    geom_smooth(method="lm") +
+    labs(title="Relación entre segunda nota (G2) y nota final (G3)",
+         x="G2", y="G3")
+```
+
+#### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
+
+Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`). Esto indica que el rendimiento inicial de los estudiantes es un buen indicador del rendimiento final. La dispersión alrededor de la línea de tendencia es baja, lo que sugiere que `G1` podría ser una variable predictiva fuerte para el modelo supervisado. Lo mismo pasa con `G2.`
