@@ -223,14 +223,16 @@ Al observar la primera gráfica, vemos que la mediana y la distribución de las 
 #| out.width: 100%
 #| out-height: 50%
 datos |>
-  mutate(studytime_label = factor(studytime, levels = 1:4,
+  mutate(studytime = factor(studytime, levels = 1:4,
                                   labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
-  ggplot(aes(x = studytime_label, y = G3, fill = studytime_label)) +
+  ggplot(aes(x = studytime, y = G3, fill = studytime)) +
   geom_boxplot(alpha = 0.8) +
-  labs(title = "Nota final (G3) según tiempo de estudio semanal",
+  labs(
+    title = "Nota final (G3) según tiempo de estudio semanal",
     x = "Tiempo de estudio",
     y = "Nota final",
-    fill = "Tiempo de estudio") +
+    fill = "Tiempo de estudio"
+  ) +
   theme_minimal() +
   scale_fill_brewer(palette = "Pastel2") +
   theme(legend.position = "none") +
