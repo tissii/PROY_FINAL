@@ -124,6 +124,20 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
 
 Compara el porcentaje de estudiantes que aprueban (nota final suficiente) en función del nivel educativo alcanzado por la madre.
 
+-   Los hijos de madres con educación superior tienen la tasa de aprobación más alta (**74.8%**).
+
+<!-- -->
+
+-    Los hijos de madres con educación primaria presentan la tasa más baja (**57.6%**).
+
+<!-- -->
+
+-    Entre medias, los niveles de secundaria, 5to a 9no grado, y sin educación rondan entre **64% y 67%**, sin una diferencia notoria.
+
+<!-- -->
+
+-    Llama la atención que el grupo “sin educación” **(66.7%**) no es el más bajo: supera a primaria y se parece a secundaria y 5to-9no grado.
+
 ```{r}
 #| fig-cap: "Clases extra pagas"
 #| out.width: 100%
@@ -149,6 +163,16 @@ datos |>
 
 ```
 
+Compara la tasa de aprobación de estudiantes que **pagan clases extra** frente a quienes no lo hacen.
+
+-   Los estudiantes que pagan clases extra tienen una tasa de aprobación de **71.8%**.
+
+<!-- -->
+
+-    Los que no pagan clases extra tienen una tasa de aprobación de **63.1%**.
+
+Los estudiantes que reciben clases extra tienen más probabilidades de aprobar que quienes no lo hacen. Este resultado respalda la idea de que el refuerzo académico adicional (clases particulares o tutorías) tiene un impacto positivo en el rendimiento escolar.
+
 ```{r}
 #| fig-cap: "Acceso a internet"
 #| out.width: 100%
@@ -169,6 +193,16 @@ datos |>
 
 ```
 
+Compara la tasa de aprobación de estudiantes con acceso a internet en casa frente a aquellos que no tienen acceso.
+
+-   Los estudiantes con internet tienen una tasa de aprobación de **68.4%**.
+
+<!-- -->
+
+-    Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
+
+Esto concluye a que tener acceso a internet está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
+
 ```{r}
 #| fig-cap: "Box plot de clasificacion por periodo"
 #| out.width: 100%
@@ -177,11 +211,14 @@ datos |>
     pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
     labs(title = "Distribución de calificaciones por período",
          x = "Período",
-         y = "Nota") + theme_minimal()+ stat_summary(fun = mean, 
-                                  geom = "point",
-                                  shape = 20, size = 3, 
-                                  color = "black")+
-theme(legend.position = "none") +theme(axis.title.x = element_text(margin = margin(t = 10)))
+         y = "Nota") + 
+  theme_minimal()+ 
+  stat_summary(fun = mean, 
+               geom = "point",
+               shape = 20, size = 3, 
+               color = "black")+
+theme(legend.position = "none") +
+  theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
 Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de G1, G2 y G3 son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio dramático (ni mejora ni empeoramiento fuerte) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (G1 y G2) pueden predecir bastante bien la nota final (G3).
@@ -191,12 +228,13 @@ datos |>
   mutate(
     studytime_label = factor(studytime, levels = 1:4, labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
   ggplot(aes(x = studytime_label, y = G3, fill = studytime_label)) +
-  geom_boxplot(alpha=0.9) +
+  geom_boxplot(alpha=0.8) +
   labs(
     title = "Nota final (G3) según tiempo de estudio semanal",
     x = "Tiempo de estudio",
     y = "Nota final",
-    fill = "Tiempo de estudio") + theme_minimal() +
+    fill = "Tiempo de estudio") +
+  theme_minimal() +
   scale_fill_brewer(palette = "Pastel2")+
   theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
