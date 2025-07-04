@@ -50,17 +50,17 @@ Información demográfica: edad, género, dirección.
 
 Contexto familiar: nivel educacional de los padres, categoría laboral de los padres, relación familiar.
 
-Academic aspects: study time, absences, partial and final grades.
+Aspectos academicos: tiempo de estudio, inasistencias, notas parciales y finales.
 
-Socioeconomic Variables: extracurricular activities, education support, drinking behavior, among others.
+Variables socioeconómicas: actividades extracurriculares, apoyo educativo, comportamiento de consumo de alcohol, entre otras.
 
 Este grado de precisión ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita la uso de las técnicas del análisis exploratorio y el modelado estadístico.
 
 La variable `G3` es la nota final anual. Mientras que `G1` y `G2` corresponden a las notas de primer y segundo período respectivamente.
 
-Para el mejor entendimiento de las variable de calificaciones se deja breve explicacion del funcionamiendo del sistema de evaluacion en portugal:
+Para el mejor entendimiento de las variable de calificaciones se deja breve explicacion del funcionamiento del sistema de evaluación en portugal:
 
-En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, de donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer semestre, del segundo semestre y a la calificación del cierre del curso, correspondientemente.
+En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer período, del segundo período y a la calificación del cierre del curso, correspondientemente.
 
 Es importante tener en cuenta que, para obtener una nota final válida, el estudiante debe cumplir con varios, requisitos académicos como asistir a clases y presentarse a las evaluaciones correspondientes. En caso de incumplimiento, abandono del curso o ausencia en el examen final, se asigna automáticamente una calificación de 0 como nota final, independientemente de las calificaciones obtenidas en los períodos anteriores.
 
@@ -227,7 +227,7 @@ datos |>
 
 ```
 
-Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Ademas, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
+Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
 #| fig-cap: "Relacion entre G1/G2 y G3"
@@ -262,11 +262,11 @@ datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures)
 
 ```
 
-En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (G3) tiende a bajar.
+En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (`G3`) tiende a bajar.
 
-Los estudiantes sin cursos desaprobados (failures = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
+Los estudiantes sin cursos desaprobados (`failures` = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
 
-Para las puntuaciones de failure = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidadkmln de no aprobar.
+Para las puntuaciones de `failure` = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidad de no aprobar.
 
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
 
@@ -294,7 +294,7 @@ Los estudiantes con tiempos de viaje menores a 15 minutos, entre 15-30 minutos y
 
 Los estudiantes con tiempos de viaje mayores a 1 hora muestran una distribución más estrecha y concentrada en torno a notas cercanas a 10, con menor dispersión y una leve tendencia a agruparse en calificaciones más bajas que los grupos con viajes más cortos. Esto podría indicar que los tiempos de viaje muy largos se asocian con un rendimiento algo más bajo o con menor variabilidad (menos probabilidad de alcanzar notas muy altas).\
 
-Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan distribuciones más amplias en las notas altas (15-20). Esto podría sugerir que estudiantes con trayectos más cortos pueden llegar a tener mayores posibilidades de obtener calificaciones más altas, quizás porque les queda más tiempo para estudiar o porque el trayecto es menos agotador y están mas descansados en clase.
+Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan distribuciones más amplias en las notas altas (15-20). Esto podría sugerir que estudiantes con trayectos más cortos pueden llegar a tener mayores posibilidades de obtener calificaciones más altas, quizás porque les queda más tiempo para estudiar o porque el trayecto es menos agotador y están más descansados en clase.
 
 Estas conclusiones nos generó una nueva pregunta; ¿Más tiempo de viaje es indicador de mayor cantidad de faltas?
 
@@ -317,7 +317,7 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece haber mas densidad en la parte superior del violín, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
 
 # Modelo:
 
@@ -485,6 +485,6 @@ Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permiti�
 
 **Analizar la calidad del estudio:** profundizar en cómo influyen no solo las horas de estudio, sino la forma en que se organiza y la calidad del apoyo recibido.
 
-**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar como la calidad docente, infraestructura, recursos. También aspectos psicológicos comomotivación, estrés del estudiante.
+**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar por ejemplo la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
 
-**Realizar estudios mas extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
+**Realizar estudios más extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
