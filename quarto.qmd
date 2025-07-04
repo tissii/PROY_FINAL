@@ -97,10 +97,10 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
 **70.6%** de los estudiantes masculinos aprueban, mientras que **63.9%** de las estudiantes femeninas aprueban.
 
 ```{r}
-#| fig-cap: "Educacion de la madre"
+#| fig-cap: "Educación de la madre"
 #| out.width: 100%
 #| out-height: 50%
- datos |> mutate(Medu= case_when(Medu=='0'~'No educacion',
+ datos |> mutate(Medu= case_when(Medu=='0'~'No educación',
                                  Medu=='1'~'Edu. primaria',
                                  Medu== '2'~ 'De 5to a 9no grado', 
                                  Medu=='3'~'Edu. Secundaria', 
@@ -230,7 +230,7 @@ datos |>
 Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
-#| fig-cap: "Relacion entre G1/G2 y G3"
+#| fig-cap: "Relación entre G1/G2 y G3"
 #| out.width: 100%
 #| out-height: 50%
 ggplot(datos, aes(x=G1, y=G3)) +
@@ -358,7 +358,7 @@ metricas
 
 El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que confirma que, sin considerar `G1` y `G2`, la capacidad predictiva de las demás variables no es muy buena. Este resultado coincide con el comentario de la página original del dataset, que señala que la nota final (`G3`) depende en gran parte de los parciales anteriores.
 
-A continuacion haremos un modelo teniendo en cuenta `G1` y `G2`.
+A continuación haremos un modelo teniendo en cuenta `G1` y `G2`.
 
 ```{r}
 #| out.width: 100%
@@ -372,7 +372,7 @@ modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurit
 modelo |> vip()
 ```
 
-A continuación un pantallazo de la tabla de predicción:
+Aquí un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
@@ -467,7 +467,7 @@ El código de la app shiny se encuentra en el repositorio como \<\<app\>\> [y aq
 ## Comentarios finales Principales conclusiones
 
 **Relación entre calificaciones parciales y finales**\
-En primer lugar, confirmamos que las calificaciones parciales (G1 y G2) explican gran parte del rendimiento final (G3). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de R^2^ sin G1 y G2, el modelo apenas alcanza un R^2^ de 0,18 mientras que al incluirlas sube a 0,81, lo que demuestra su gran peso explicativo.
+En primer lugar, confirmamos que las calificaciones parciales (`G1` y `G2`) explican gran parte del rendimiento final (`G3`). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de `R2` sin `G1` y `G2`, el modelo apenas alcanza un `R2` de 0.18 mientras que al incluirlas sube a 0.81, lo que demuestra su gran peso explicativo.
 
 **Factores de apoyo académico y contexto familiar**\
 Detectamos que ciertas variables como pagar clases particulares, tener acceso a internet en casa y el nivel educativo de la madre están asociadas a una mayor probabilidad de aprobación. Por ejemplo, los estudiantes que reciben clases extra tienen una tasa de aprobación del 71,8% frente al 63,1% de quienes no lo hacen. De forma similar, quienes cuentan con internet presentan mejores resultados (68,4% frente a 60,6%) y los hijos de madres con educación superior superan claramente a aquellos con madres con nivel primario (74,8% frente a 57,6%).
@@ -479,7 +479,7 @@ El número de cursos reprobados previamente resulta ser un fuerte indicador de b
 El tiempo de viaje hasta la escuela también muestra cierta relación indirecta: quienes recorren más de una hora tienden a tener más faltas y rendimientos algo más bajos. Los estudiantes con trayectos más cortos suelen tener mejor desempeño y menor ausentismo, probablemente por disponer de más tiempo para estudiar y llegar menos fatigados.
 
 **Mejora del modelo al usar clasificación binaria**\
-Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permitió mejorar la precisión. Sin G1 y G2, la precisión alcanzó un 73%, mientras que al incluirlas se elevó a un 90%, lo que refuerza su relevancia.
+Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permitió mejorar la precisión. Sin `G1` y `G2`, la precisión alcanzó un 73%, mientras que al incluirlas se elevó a un 90%, lo que refuerza su relevancia.
 
 ## Posibles lineas de trabajo futuras:
 
@@ -487,4 +487,4 @@ Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permiti�
 
 **Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar por ejemplo la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
 
-**Realizar estudios más extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
+**Realizar estudios más extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (en este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
