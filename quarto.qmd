@@ -462,7 +462,7 @@ Hay algo que se observa de forma consistente en todos los modelos: las variables
 
 Para complementar el análisis, se diseñó una aplicación Shiny que permite visualizar los principales resultados del análisis exploratorio de forma interactiva. La aplicación organiza la información en tres pestañas: la primera muestra gráficos de barras, la segunda contiene boxplots y la tercera presenta gráficos de violín, todo esto para brindar una perspectiva más detallada de la distribución de las variables.
 
-El código de la app shiny se encuentra en el repositorio como \<\<app shiny\>\> y aquí está el link.
+El código de la app shiny se encuentra en el repositorio como \<\<appshiny\>\> y aquí está el link.
 
 ## Comentarios finales Principales conclusiones
 
