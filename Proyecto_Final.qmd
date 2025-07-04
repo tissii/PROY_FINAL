@@ -86,7 +86,7 @@ Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los
 #| fig-cap: "Sexo"
 #| out.width: 100% 
 #| out-height: 50%
-datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"),                               total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
 
 ```
 
