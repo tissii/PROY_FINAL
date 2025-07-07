@@ -485,6 +485,6 @@ Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permiti�
 
 **Analizar la calidad del estudio:** profundizar en cómo influyen no solo las horas de estudio, sino la forma en que se organiza y la calidad del apoyo recibido.
 
-**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar como la calidad docente, infraestructura, recursos. También aspectos psicológicos comomotivación, estrés del estudiante.
+**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar como la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
 
 **Realizar estudios mas extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
