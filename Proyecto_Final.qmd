@@ -150,8 +150,6 @@ datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
        x = 'Clases extra',
        y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() +
   theme(legend.position = "none")
-
-
 ```
 
 Aqui podemos visualizar la tasa de aprobación de estudiantes segun si **pagan clases extra** o no.
@@ -186,27 +184,7 @@ Este gráfico compara la tasa de aprobación de estudiantes con acceso a interne
 -   Los estudiantes con internet tienen una tasa de aprobación de **68.4%**.
 -   Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
 
-Esto concluye a que tener acceso a internet, almenos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
-
-```{r}
-#| fig-cap: "Box plot de clasificacion por periodo"
-#| out.width: 100%
-#| out-height: 50%
-datos |>
-    pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
-    labs(title = "Distribución de calificaciones por período",
-         x = "Período",
-         y = "Nota") + 
-  theme_minimal()+ 
-  stat_summary(fun = mean, 
-               geom = "point",
-               shape = 20, size = 3, 
-               color = "black")+
-theme(legend.position = "none") +
-  theme(axis.title.x = element_text(margin = margin(t = 10)))
-```
-
-Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
+Esto concluye a que tener acceso a internet, al menos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
 
 ```{r}
 #| fig-cap: "Box plot de nota final segun tiempo de estudio"
@@ -233,6 +211,26 @@ datos |>
 Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
+#| fig-cap: "Box plot de clasificacion por periodo"
+#| out.width: 100%
+#| out-height: 50%
+datos |>
+    pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
+    labs(title = "Distribución de calificaciones por período",
+         x = "Período",
+         y = "Nota") + 
+  theme_minimal()+ 
+  stat_summary(fun = mean, 
+               geom = "point",
+               shape = 20, size = 3, 
+               color = "black")+
+theme(legend.position = "none") +
+  theme(axis.title.x = element_text(margin = margin(t = 10)))
+```
+
+Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`)
+
+```{r}
 #| fig-cap: "Relación entre G1/G2 y G3"
 #| out.width: 100%
 #| out-height: 50%
@@ -241,6 +239,7 @@ ggplot(datos, aes(x=G1, y=G3)) +
     geom_smooth(method="lm") +
     labs(title="Relación entre primera nota (G1) y nota final (G3)",
          x="G1", y="G3")
+
 ggplot(datos, aes(x=G2, y=G3)) +
     geom_point(alpha=0.6) +
     geom_smooth(method="lm") +
