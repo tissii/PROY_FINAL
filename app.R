@@ -6,6 +6,8 @@ library(dplyr)
 library(tidyr)
 library(forcats)
 library(readr)
+library(parsnip)
+library(ranger)
 library(vip)
 
 data <- read_csv2("student-mat.csv")
@@ -13,87 +15,87 @@ data <- read_csv2("student-mat.csv")
 ui <- dashboardPage(dashboardHeader(
   title = "Dashboard Estudiantes"),
   dashboardSidebar(sidebarMenu(menuItem("Gráficos de barras", tabName = "barras", icon = icon("chart-bar")),
-  menuItem("Gráficos de dispersión", tabName = "dispersion", icon = icon("ellipsis-h")),
-  menuItem("Boxplots", tabName = "boxplots", icon = icon("cube")),
-  menuItem("Violin Plots", tabName = "violins", icon = icon("guitar")),
-  menuItem("Importancia de Variables", tabName = "vip", icon = icon("tree")))),
+                               menuItem("Gráficos de dispersión", tabName = "dispersion", icon = icon("ellipsis-h")),
+                               menuItem("Boxplots", tabName = "boxplots", icon = icon("cube")),
+                               menuItem("Violin Plots", tabName = "violins", icon = icon("guitar")),
+                               menuItem("Importancia de Variables", tabName = "vip", icon = icon("tree")))),
   dashboardBody(tabItems(tabItem(tabName = "barras",
-              fluidRow(box(title = "Selector de agrupación",
-                  status = "warning",
-                  solidHeader = TRUE,
-                  width = 12,
-                  pickerInput(
-                    "agrupacion",
-                    "Mostrar porcentaje de aprobación según:",
-                    choices = c("Sexo" = "sex",
-                                "Educación de la madre" = "Medu",
-                                "Acceso a Internet" = "internet",
-                                "Clases extra" = "paid"),
-                    selected = "sex"))),
-              fluidRow(box(title = "Porcentaje de Aprobación",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  plotOutput("barras")))),
-      tabItem(tabName = "dispersion", 
-              fluidRow(box(
-                  title = "Selector de Ejes",
-                  status = "warning",
-                  solidHeader = TRUE,
-                  width = 12,
-                  selectInput("eje_x",
-                    "Selecciona la calificación parcial para comparar con G3:",
-                    choices = c("Primera calificación parcial (G1)" = "G1",
-                                "Segunda calificación parcial (G2)" = "G2"),
-                    selected = "G1"))),
-              fluidRow(box(title = "Gráficos de Dispersión",
-                  status = "info",
-                  solidHeader = TRUE,
-                  width = 12,
-                  plotOutput("scatter_plot")))),
-      tabItem(tabName = "boxplots", 
-              fluidRow(box(title = "Selector de Boxplot",
-                           status = "warning",
-                           solidHeader = TRUE,
-                           width = 12,
-                           radioButtons("boxplot_type", "Selecciona el boxplot:",
-                                        choices = c("Nota final según tiempo de estudio semanal" = "studytime",
-                                                    "Clasificación por periodo (G1-G2-G3)" = "periodo"), inline = TRUE),
-                           plotOutput("boxplot")))),
-      tabItem(tabName = "violins",
-              fluidRow(box(title = "Violín: Ausencias vs. Tiempo de Viaje",
-                           status = "info",
-                           solidHeader = TRUE,
-                           width = 12,
-                           plotOutput("violin_ausencias"))),
-        fluidRow(box(title = "Violín: Nota Final vs. Tiempo de Viaje",
-                     status = "info",
-                     solidHeader = TRUE,
-                     width = 12,
-                     plotOutput("violin_g3_traveltime"))),
-              fluidRow(box(title = "Violín: Nota Final vs. Cursos Reprobados",
-                           status = "info",
-                           solidHeader = TRUE,
-                           width = 12,
-                           plotOutput("violin_g3_failures")))),
-      tabItem(tabName = "vip",
-              fluidRow(box(title = "Selector de Modelo",
-                           status = "warning",
-                           solidHeader = TRUE,
-                           width = 12,
-                           pickerInput("modelo_vip",
-                                       "Selecciona el modelo Random Forest:",
-                                       choices = c("Numérico sin G1 y G2" = "num_sin_g12",
-                                                   "Numérico con G1 y G2" = "num_con_g12",
-                                                   "Categórico sin G1 y G2" = "cat_sin_g12",
-                                                   "Categórico con G1 y G2" = "cat_con_g12"),
-                                       selected = "num_sin_g12"))),
-              fluidRow(box(title = "Importancia de Variables",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  plotOutput("vip_plot")))))))
-  
+                                 fluidRow(box(title = "Selector de agrupación",
+                                              status = "warning",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              pickerInput(
+                                                "agrupacion",
+                                                "Mostrar porcentaje de aprobación según:",
+                                                choices = c("Sexo" = "sex",
+                                                            "Educación de la madre" = "Medu",
+                                                            "Acceso a Internet" = "internet",
+                                                            "Clases extra" = "paid"),
+                                                selected = "sex"))),
+                                 fluidRow(box(title = "Porcentaje de Aprobación",
+                                              status = "primary",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("barras")))),
+                         tabItem(tabName = "dispersion", 
+                                 fluidRow(box(
+                                   title = "Selector de Ejes",
+                                   status = "warning",
+                                   solidHeader = TRUE,
+                                   width = 12,
+                                   selectInput("eje_x",
+                                               "Selecciona la calificación parcial para comparar con G3:",
+                                               choices = c("Primera calificación parcial (G1)" = "G1",
+                                                           "Segunda calificación parcial (G2)" = "G2"),
+                                               selected = "G1"))),
+                                 fluidRow(box(title = "Gráficos de Dispersión",
+                                              status = "info",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("scatter_plot")))),
+                         tabItem(tabName = "boxplots", 
+                                 fluidRow(box(title = "Selector de Boxplot",
+                                              status = "warning",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              radioButtons("boxplot_type", "Selecciona el boxplot:",
+                                                           choices = c("Nota final según tiempo de estudio semanal" = "studytime",
+                                                                       "Clasificación por periodo (G1-G2-G3)" = "periodo"), inline = TRUE),
+                                              plotOutput("boxplot")))),
+                         tabItem(tabName = "violins",
+                                 fluidRow(box(title = "Violín: Ausencias vs. Tiempo de Viaje",
+                                              status = "info",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("violin_ausencias"))),
+                                 fluidRow(box(title = "Violín: Nota Final vs. Tiempo de Viaje",
+                                              status = "info",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("violin_g3_traveltime"))),
+                                 fluidRow(box(title = "Violín: Nota Final vs. Cursos Reprobados",
+                                              status = "info",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("violin_g3_failures")))),
+                         tabItem(tabName = "vip",
+                                 fluidRow(box(title = "Selector de Modelo",
+                                              status = "warning",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              pickerInput("modelo_vip",
+                                                          "Selecciona el modelo Random Forest:",
+                                                          choices = c("Numérico sin G1 y G2" = "num_sin_g12",
+                                                                      "Numérico con G1 y G2" = "num_con_g12",
+                                                                      "Categórico sin G1 y G2" = "cat_sin_g12",
+                                                                      "Categórico con G1 y G2" = "cat_con_g12"),
+                                                          selected = "num_sin_g12"))),
+                                 fluidRow(box(title = "Importancia de Variables",
+                                              status = "primary",
+                                              solidHeader = TRUE,
+                                              width = 12,
+                                              plotOutput("vip_plot")))))))
+
 modelo_num_sin_g12 <- readRDS("modelo_num_sin_g12.rds")
 modelo_num_con_g12 <- readRDS("modelo_num_con_g12.rds")
 modelo_cat_sin_g12 <- readRDS("modelo_cat_sin_g12.rds")
@@ -141,10 +143,10 @@ server <- function(input, output) {
       scale_fill_manual(values = colores_pastel) +
       theme_minimal(base_size = 14) +
       theme(legend.position = "none",
-        axis.title = element_text(size = 16, face = "bold"),
-        axis.text = element_text(size = 14),
-        plot.title = element_text(size = 18, face = "bold"),
-        axis.title.x = element_text(margin = margin(t = 15)))})
+            axis.title = element_text(size = 16, face = "bold"),
+            axis.text = element_text(size = 14),
+            plot.title = element_text(size = 18, face = "bold"),
+            axis.title.x = element_text(margin = margin(t = 15)))})
   output$scatter_plot <- renderPlot({
     df <- datos_estado()
     ggplot(df, aes_string(x = input$eje_x, y = "G3")) +
@@ -154,8 +156,8 @@ server <- function(input, output) {
            x = input$eje_x, y = "Nota Final (G3)") +
       theme_minimal(base_size = 14) +
       theme(axis.title = element_text(size = 16, face = "bold"),
-        axis.text = element_text(size = 14),
-        plot.title = element_text(size = 18, face = "bold"))})
+            axis.text = element_text(size = 14),
+            plot.title = element_text(size = 18, face = "bold"))})
   output$boxplot <- renderPlot({
     df <- datos_estado()
     if (input$boxplot_type == "studytime") {
@@ -166,10 +168,10 @@ server <- function(input, output) {
         scale_fill_brewer(palette = "Pastel2") +
         theme_minimal(base_size = 14) +
         theme(legend.position = "none",
-          axis.title.x = element_text(margin = margin(t = 10)),
-          axis.title = element_text(size = 16, face = "bold"),
-          axis.text = element_text(size = 14),
-          plot.title = element_text(size = 18, face = "bold"))}
+              axis.title.x = element_text(margin = margin(t = 10)),
+              axis.title = element_text(size = 16, face = "bold"),
+              axis.text = element_text(size = 14),
+              plot.title = element_text(size = 18, face = "bold"))}
     else {
       df_long <- df |> pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota")
       ggplot(df_long, aes(x = Periodo, y = Nota, fill = Periodo)) +
@@ -177,13 +179,13 @@ server <- function(input, output) {
         scale_fill_brewer(palette = "Paired") +
         stat_summary(fun = mean, geom = "point", shape = 20, size = 3, color = "black") +
         labs(title = "Boxplot de Clasificación por Periodo",
-          x = "Periodo",
-          y = "Nota") +
+             x = "Periodo",
+             y = "Nota") +
         theme_minimal(base_size = 14) +
         theme(legend.position = "none",
-          axis.title = element_text(size = 16, face = "bold"),
-          axis.text = element_text(size = 14),
-          plot.title = element_text(size = 18, face = "bold"))}})
+              axis.title = element_text(size = 16, face = "bold"),
+              axis.text = element_text(size = 14),
+              plot.title = element_text(size = 18, face = "bold"))}})
   output$violin_ausencias <- renderPlot({
     df <- datos_estado()
     ggplot(df, aes(x = traveltime, y = absences, fill = traveltime)) +
@@ -231,5 +233,6 @@ server <- function(input, output) {
                                   "num_con_g12" = modelo_num_con_g12,
                                   "cat_sin_g12" = modelo_cat_sin_g12,
                                   "cat_con_g12" = modelo_cat_con_g12)
-modelo_seleccionado |> vip() + theme_minimal(base_size = 14)})}
+    modelo_seleccionado |> vip() + theme_minimal(base_size = 14)})}
+
 shinyApp(ui, server)
