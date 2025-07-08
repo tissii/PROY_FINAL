@@ -9,6 +9,9 @@ lang: es
 fig-format: retina
 fig-height: 4
 fig-width: 6
+knitr:
+  opts_chunk:
+    fig.path: "D:/facultad/CDR/PROY_FINAL/graficooos"
 ---
 
 ## 
@@ -25,9 +28,9 @@ library(RColorBrewer)
 
 # Introducción:
 
-Este trabajo tiene como objetivo investigar los factores que influyen en el rendimiento académico de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
+Como estudiantes, sabemos por experiencia propia lo dificil que puede ser mantener un buen rendimiento académico y equilibrar los factores personales, familiares y sociales que influyen en él. Esta experiencia nos motivó a investigar más a fondo qué elementos concretos pueden impactar en las calificaciones de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
 
-El [dataset](https://archive.ics.uci.edu/dataset/320/student+performance) recopila información detallada sobre el rendimiento de alumnos de dos escuelas secundarias en Portugal, considerando diversas variables. El archivo original se divide en dos partes: una que contiene datos de la asignatura de Matemáticas y otra de Lengua Portuguesa. En este estudio, nos enfocaremos únicamente en el análisis del desempeño en Matemáticas.
+El [dataset](https://archive.ics.uci.edu/dataset/320/student+performance) recopila información (durante el año lectivo 2005/2006) detallada sobre el rendimiento de alumnos de dos escuelas secundarias en Portugal, considerando diversas variables. El archivo original se divide en dos partes: una que contiene datos de la asignatura de Matemáticas y otra de Lengua Portuguesa. En este estudio, nos enfocaremos únicamente en el análisis del desempeño en Matemáticas.
 
 A partir de este caso especifico, buscamos identificar posibles relaciones entre características personales, familiares y escolares y las calificaciones finales, sin la intención de generalizar los resultados más allá de este contexto particular. Para ello, se emplearán técnicas de análisis exploratorio de datos y se construirá un modelo estadístico que permita predecir la nota final de los estudiantes. Finalmente, se desarrollará una aplicación Shiny para presentar de manera interactiva los resultados más relevantes.
 
@@ -40,33 +43,33 @@ datos <- read_csv2("student-mat.csv")
 glimpse(datos)
 ```
 
-El dataset utilizado aquí procede del **UCI Machine Learning Repository**, un sitio web científico respetado donde se almacenan datasets con el propósito de uso en el proceso de enseñanza e investigaciones en aprendizaje automático en estadística.
+El dataset utilizado como ya mencionamos procede de **UCI Machine Learning Repository** (repositorio de datos abiertos internacional).
 
 El archivo seleccionado corresponde a información recopilada en dos escuelas secundarias portuguesas, específicamente sobre estudiantes de la asignatura de Matemáticas. El dataset contiene un total de **395 observaciones**, cada una correspondiente a un estudiante individual.
 
 En total se incluyen **33 variables**, que abarcan características académicas, personales, familiares y sociales. Entre ellas se encuentran variables como:
 
-Información demográfica: edad, género, dirección.
+Información demográfica: edad, género, si vive en lugar urbano o rural.
 
 Contexto familiar: nivel educacional de los padres, categoría laboral de los padres, relación familiar.
 
-Academic aspects: study time, absences, partial and final grades.
+Aspectos academicos: tiempo de estudio, inasistencias, notas parciales y finales.
 
-Socioeconomic Variables: extracurricular activities, education support, drinking behavior, among others.
+Variables socioeconómicas: actividades extracurriculares, apoyo educativo, comportamiento de consumo de alcohol, entre otras.
 
-Este grado de precisión ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita la uso de las técnicas del análisis exploratorio y el modelado estadístico.
+Este cantidad de variables ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita el uso de técnicas de análisis exploratorio y modelado estadístico.
 
 La variable `G3` es la nota final anual. Mientras que `G1` y `G2` corresponden a las notas de primer y segundo período respectivamente.
 
-Para el mejor entendimiento de las variable de calificaciones se deja breve explicacion del funcionamiendo del sistema de evaluacion en portugal:
+Para el mejor entendimiento de las variables de calificaciones recién mencionadas dejamos una breve explicación del funcionamiento del sistema de evaluación en estas escuelas portuguesas:
 
-En el sistema educativo de estas escuelas portuguesas se adoptan calificaciones de 0 a 20 de escala, de donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer semestre, del segundo semestre y a la calificación del cierre del curso, correspondientemente.
+Se adoptan calificaciones de 0 a 20 de escala, donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer período, del segundo período y a la calificación del cierre del curso, correspondientemente.
 
-Es importante tener en cuenta que, para obtener una nota final válida, el estudiante debe cumplir con varios, requisitos académicos como asistir a clases y presentarse a las evaluaciones correspondientes. En caso de incumplimiento, abandono del curso o ausencia en el examen final, se asigna automáticamente una calificación de 0 como nota final, independientemente de las calificaciones obtenidas en los períodos anteriores.
+Es importante mencionar que, una calificación final de 0 podría reflejar que el estudiante no se presentó a clase o a evaluaciones clave. Sin embargo, el dataset no aclara si existe una regla administrativa de 0 en caso de inasistencia o abandono del curso..
 
 # Análisis Exploratorio:
 
-El objetivo de este análisis exploratorio es determinar si las variables que, en un primer momento, seleccionamos por considerarlas explicativas de la nota final (G3), realmente cumplen con esa función.
+El objetivo de este análisis exploratorio es determinar si las variables que, en un primer momento, seleccionamos por considerarlas explicativas de la nota final (`G3`), realmente cumplen con esa función.
 
 ```{r}
 #| fig-cap: "Estudiantes aprobados vs no aprobados"
@@ -80,13 +83,13 @@ datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
   theme(legend.position = "none")
 ```
 
-Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (**G3**). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
+Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (`G3`). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
 
 ```{r}
 #| fig-cap: "Sexo"
 #| out.width: 100% 
 #| out-height: 50%
-datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"),                               total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
 
 ```
 
@@ -97,10 +100,10 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
 **70.6%** de los estudiantes masculinos aprueban, mientras que **63.9%** de las estudiantes femeninas aprueban.
 
 ```{r}
-#| fig-cap: "Educacion de la madre"
+#| fig-cap: "Educación de la madre"
 #| out.width: 100%
 #| out-height: 50%
- datos |> mutate(Medu= case_when(Medu=='0'~'No educacion',
+ datos |> mutate(Medu= case_when(Medu=='0'~'No educación',
                                  Medu=='1'~'Edu. primaria',
                                  Medu== '2'~ 'De 5to a 9no grado', 
                                  Medu=='3'~'Edu. Secundaria', 
@@ -183,7 +186,7 @@ Este gráfico compara la tasa de aprobación de estudiantes con acceso a interne
 -   Los estudiantes con internet tienen una tasa de aprobación de **68.4%**.
 -   Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
 
-Esto concluye a que tener acceso a internet está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
+Esto concluye a que tener acceso a internet, almenos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
 
 ```{r}
 #| fig-cap: "Box plot de clasificacion por periodo"
@@ -203,7 +206,7 @@ theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio dramático (ni mejora ni empeoramiento fuerte) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
+Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
 
 ```{r}
 #| fig-cap: "Box plot de nota final segun tiempo de estudio"
@@ -227,10 +230,10 @@ datos |>
 
 ```
 
-Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Ademas, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
+Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
-#| fig-cap: "Relacion entre G1/G2 y G3"
+#| fig-cap: "Relación entre G1/G2 y G3"
 #| out.width: 100%
 #| out-height: 50%
 ggplot(datos, aes(x=G1, y=G3)) +
@@ -262,11 +265,11 @@ datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures)
 
 ```
 
-En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (G3) tiende a bajar.
+En este grafico de violin podemos observar conclusiones claras: A medida que aumenta la cantidad de cursos reprobados (failures), la distribución de la nota final (`G3`) tiende a bajar.
 
-Los estudiantes sin cursos desaprobados (failures = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
+Los estudiantes sin cursos desaprobados (`failures` = 0) presentan una concentración de notas finales más alta, con la mayoría de los valores agrupados entre 10 y 15 puntos, lo que indica un buen desempeño general.
 
-Para las puntuaciones de failure = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidadkmln de no aprobar.
+Para las puntuaciones de `failure` = 2 o 3, la distribución es mucho más dispersa y se extiende hacia notas muy bajas, llegando incluso a acumularse en valores cercanos a 0, lo que muestra una alta probabilidad de no aprobar.
 
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
 
@@ -294,7 +297,7 @@ Los estudiantes con tiempos de viaje menores a 15 minutos, entre 15-30 minutos y
 
 Los estudiantes con tiempos de viaje mayores a 1 hora muestran una distribución más estrecha y concentrada en torno a notas cercanas a 10, con menor dispersión y una leve tendencia a agruparse en calificaciones más bajas que los grupos con viajes más cortos. Esto podría indicar que los tiempos de viaje muy largos se asocian con un rendimiento algo más bajo o con menor variabilidad (menos probabilidad de alcanzar notas muy altas).\
 
-Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan distribuciones más amplias en las notas altas (15-20). Esto podría sugerir que estudiantes con trayectos más cortos pueden llegar a tener mayores posibilidades de obtener calificaciones más altas, quizás porque les queda más tiempo para estudiar o porque el trayecto es menos agotador y están mas descansados en clase.
+Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan distribuciones más amplias en las notas altas (15-20). Esto podría sugerir que estudiantes con trayectos más cortos pueden llegar a tener mayores posibilidades de obtener calificaciones más altas, quizás porque les queda más tiempo para estudiar o porque el trayecto es menos agotador y están más descansados en clase.
 
 Estas conclusiones nos generó una nueva pregunta; ¿Más tiempo de viaje es indicador de mayor cantidad de faltas?
 
@@ -317,13 +320,15 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular mas ausencias con una distribución concentrada en valores mas altos, también parece haber mas densidad en la parte superior del violín, indicando que hay mas individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
 
 # Modelo:
 
 Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`) y usaremos como variables predictoras todas menos `G1` y `G2`.
 
-El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor.
+El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
+
+### Random forest de regresión (sin tomar `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -337,9 +342,8 @@ set.seed(100725)
 split = initial_split(datos2, prop = 0.8)
 train = training(split)
 test = testing(split)
-modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
-  set_mode("regression") |> fit(G3 ~ ., data = train)
-modelo |> vip()
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |>  set_mode("regression") |> fit(G3 ~ ., data = train)
+modelo |> vip() 
 ```
 
 A continuación un pantallazo de la tabla de predicción:
@@ -358,7 +362,7 @@ metricas
 
 El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que confirma que, sin considerar `G1` y `G2`, la capacidad predictiva de las demás variables no es muy buena. Este resultado coincide con el comentario de la página original del dataset, que señala que la nota final (`G3`) depende en gran parte de los parciales anteriores.
 
-A continuacion haremos un modelo teniendo en cuenta `G1` y `G2`.
+### Random forest de regresión (tomando `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -367,12 +371,11 @@ set.seed(100725)
 split = initial_split(datos, prop = 0.8)
 train = training(split)
 test = testing(split)
-modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
-  set_mode("regression") |> fit(G3 ~ ., data = train)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> set_mode("regression") |> fit(G3 ~ ., data = train)
 modelo |> vip()
 ```
 
-A continuación un pantallazo de la tabla de predicción:
+Aquí un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
@@ -388,7 +391,9 @@ metricas
 
 El incremento del `R²` de 0.176 a 0.815 muestra claramente que `G1` y `G2` concentran casi todo el poder predictivo del modelo. Sin ellas, las variables restantes no logran predecir la nota final (`G3`) de forma adecuada.
 
-Para indagar un poco más, crearemos otro modelo de random forest pero ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos) y nuestro modelo pasará ahora a un random forest de clasificación.
+Para indagar un poco más, crearemos otro modelo de random forest per**o ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos)** y nuestro modelo pasará ahora a un random forest de clasificación.
+
+### Random forest de clasificación (sin tomar `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -398,8 +403,7 @@ datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Est
 split = initial_split(datos3, prop = 0.8, strata=Estado)
 train = training(split)
 test = testing(split)
-modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
-  set_mode("classification") |> fit(Estado ~ ., data = train)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> set_mode("classification") |> fit(Estado ~ ., data = train)
 modelo |> vip()
 ```
 
@@ -421,6 +425,8 @@ Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisi�
 
 Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respuesta siendo binaria (aprobado/no aprobado).
 
+### Random forest de clasificación (tomando `G1` y `G2`)
+
 ```{r}
 #| out.width: 100%
 #| out-height: 50%
@@ -429,8 +435,7 @@ datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Est
 split = initial_split(datos3, prop = 0.8, strata=Estado)
 train = training(split)
 test = testing(split)
-modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> 
-  set_mode("classification") |> fit(Estado ~ ., data = train)
+modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |>set_mode("classification") |> fit(Estado ~ ., data = train)
 modelo |> vip()
 ```
 
@@ -450,6 +455,8 @@ metricas
 
 Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90% y estimando correctamente aproximadamente 9 de cada 10 casos.
 
+### Conclusión:
+
 Hay algo que se observa de forma consistente en todos los modelos: las variables más importantes para predecir la nota final, sin considerar `G1` y `G2`, son principalmente:
 
 -   `failures`: número de cursos reprobados previamente (valores de 0, 1, 2, 3 o 4; donde 4 indica cuatro o más cursos reprobados).
@@ -462,29 +469,29 @@ Hay algo que se observa de forma consistente en todos los modelos: las variables
 
 Para complementar el análisis, se diseñó una aplicación Shiny que permite visualizar los principales resultados del análisis exploratorio de forma interactiva. La aplicación organiza la información en tres pestañas: la primera muestra gráficos de barras, la segunda contiene boxplots y la tercera presenta gráficos de violín, todo esto para brindar una perspectiva más detallada de la distribución de las variables.
 
-El código de la app shiny se encuentra en el repositorio como \<\<appshiny\>\> y aquí está el link.
+El código de la app shiny se encuentra en el repositorio como \<\<app\>\> [y aquí está el link](https://gastonnbar.shinyapps.io/AppShinyCDR/).
 
-## Comentarios finales Principales conclusiones
+# Comentarios finales:
 
-**Relación entre calificaciones parciales y finales**\
-En primer lugar, confirmamos que las calificaciones parciales (G1 y G2) explican gran parte del rendimiento final (G3). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de R^2^ sin G1 y G2, el modelo apenas alcanza un R^2^ de 0,18 mientras que al incluirlas sube a 0,81, lo que demuestra su gran peso explicativo.
+**Relación entre calificaciones parciales y finales:**\
+En primer lugar, confirmamos que las calificaciones parciales (`G1` y `G2`) explican gran parte del rendimiento final (`G3`). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de `R2` sin `G1` y `G2`, el modelo apenas alcanza un `R2` de 0.18 mientras que al incluirlas sube a 0.81, lo que demuestra su gran peso explicativo.
 
-**Factores de apoyo académico y contexto familiar**\
+**Factores de apoyo académico y contexto familiar:**\
 Detectamos que ciertas variables como pagar clases particulares, tener acceso a internet en casa y el nivel educativo de la madre están asociadas a una mayor probabilidad de aprobación. Por ejemplo, los estudiantes que reciben clases extra tienen una tasa de aprobación del 71,8% frente al 63,1% de quienes no lo hacen. De forma similar, quienes cuentan con internet presentan mejores resultados (68,4% frente a 60,6%) y los hijos de madres con educación superior superan claramente a aquellos con madres con nivel primario (74,8% frente a 57,6%).
 
-**Historial académico y desempeño**\
+**Historial académico y desempeño:**\
 El número de cursos reprobados previamente resulta ser un fuerte indicador de bajo rendimiento final. A mayor cantidad de asignaturas desaprobadas, menor es la probabilidad de obtener una nota suficiente.
 
-**Factores logísticos**\
+**Factores logísticos:**\
 El tiempo de viaje hasta la escuela también muestra cierta relación indirecta: quienes recorren más de una hora tienden a tener más faltas y rendimientos algo más bajos. Los estudiantes con trayectos más cortos suelen tener mejor desempeño y menor ausentismo, probablemente por disponer de más tiempo para estudiar y llegar menos fatigados.
 
-**Mejora del modelo al usar clasificación binaria**\
-Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permitió mejorar la precisión. Sin G1 y G2, la precisión alcanzó un 73%, mientras que al incluirlas se elevó a un 90%, lo que refuerza su relevancia.
+**Mejora del modelo al usar clasificación binaria:**\
+Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permitió mejorar la precisión. Sin `G1` y `G2`, la precisión alcanzó un 73%, mientras que al incluirlas se elevó a un 90%, lo que vuelve a reforzar su relevancia.
 
 ## Posibles lineas de trabajo futuras:
 
 **Analizar la calidad del estudio:** profundizar en cómo influyen no solo las horas de estudio, sino la forma en que se organiza y la calidad del apoyo recibido.
 
-**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar como la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
+**Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar por ejemplo la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
 
-**Realizar estudios mas extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (En este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
+**Realizar estudios más extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (en este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
