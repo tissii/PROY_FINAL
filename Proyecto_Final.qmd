@@ -338,6 +338,7 @@ split = initial_split(datos2, prop = 0.8)
 train = training(split)
 test = testing(split)
 modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |>  set_mode("regression") |> fit(G3 ~ ., data = train)
+saveRDS(modelo_num_sin_g12, file = "modelo_num_sin_g12.rds")
 modelo |> vip() 
 ```
 
@@ -367,6 +368,7 @@ split = initial_split(datos, prop = 0.8)
 train = training(split)
 test = testing(split)
 modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> set_mode("regression") |> fit(G3 ~ ., data = train)
+saveRDS(modelo_num_con_g12, file = "modelo_num_con_g12.rds")
 modelo |> vip()
 ```
 
@@ -397,6 +399,7 @@ split = initial_split(datos3, prop = 0.8, strata=Estado)
 train = training(split)
 test = testing(split)
 modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |> set_mode("classification") |> fit(Estado ~ ., data = train)
+saveRDS(modelo_cat_sin_g12, file = "modelo_cat_sin_g12.rds")
 modelo |> vip()
 ```
 
@@ -427,6 +430,7 @@ split = initial_split(datos3, prop = 0.8, strata=Estado)
 train = training(split)
 test = testing(split)
 modelo = rand_forest(trees= 1000) |>  set_engine("ranger", importance = "impurity") |>set_mode("classification") |> fit(Estado ~ ., data = train)
+saveRDS(modelo_cat_con_g12, file = "modelo_cat_con_g12.rds")
 modelo |> vip()
 ```
 
