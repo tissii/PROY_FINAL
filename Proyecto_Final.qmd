@@ -231,27 +231,6 @@ theme(legend.position = "none") +
 Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`)
 
 ```{r}
-#| fig-cap: "Relación entre G1/G2 y G3"
-#| out.width: 100%
-#| out-height: 50%
-ggplot(datos, aes(x=G1, y=G3)) +
-    geom_point(alpha=0.6) +
-    geom_smooth(method="lm") +
-    labs(title="Relación entre primera nota (G1) y nota final (G3)",
-         x="G1", y="G3")
-
-ggplot(datos, aes(x=G2, y=G3)) +
-    geom_point(alpha=0.6) +
-    geom_smooth(method="lm") +
-    labs(title="Relación entre segunda nota (G2) y nota final (G3)",
-         x="G2", y="G3")
-```
-
-#### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
-
-Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **indica que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`. Por este motivo, **decidimos no incluir** `G1` y `G2` como variables explicativas al construir el modelo, además, en la misma página del dataset dice: *'It is more difficult to predict G3 without G2 and `G1`, but **such prediction is much more useful**'*. En base a esto, optamos por evaluar únicamente otras variables para explicar la nota final.
-
-```{r}
 #| fig-cap: "Violin plot de nota final segun cantidad de cursos reprobados"
 #| out.width: 100%
 #| out-height: 50%
@@ -320,6 +299,27 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
 ```
 
 El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
+
+```{r}
+#| fig-cap: "Relación entre G1/G2 y G3"
+#| out.width: 100%
+#| out-height: 50%
+ggplot(datos, aes(x=G1, y=G3)) +
+    geom_point(alpha=0.6) +
+    geom_smooth(method="lm") +
+    labs(title="Relación entre primera nota (G1) y nota final (G3)",
+         x="G1", y="G3")
+
+ggplot(datos, aes(x=G2, y=G3)) +
+    geom_point(alpha=0.6) +
+    geom_smooth(method="lm") +
+    labs(title="Relación entre segunda nota (G2) y nota final (G3)",
+         x="G2", y="G3")
+```
+
+#### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
+
+Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **indica que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`. Por este motivo, **decidimos no incluir** `G1` y `G2` como variables explicativas al construir el modelo, además, en la misma página del dataset dice: *'It is more difficult to predict G3 without G2 and `G1`, but **such prediction is much more useful**'*. En base a esto, optamos por evaluar únicamente otras variables para explicar la nota final.
 
 # Modelo:
 
