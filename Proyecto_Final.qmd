@@ -9,6 +9,9 @@ lang: es
 fig-format: retina
 fig-height: 4
 fig-width: 6
+knitr:
+  opts_chunk:
+    fig.path: "D:/facultad/CDR/PROY_FINAL/graficooos"
 ---
 
 ## 
@@ -25,7 +28,7 @@ library(RColorBrewer)
 
 # Introducción:
 
-Este trabajo tiene como objetivo investigar los factores que influyen en el rendimiento académico de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
+Como estudiantes, sabemos por experiencia propia lo dificil que puede ser mantener un buen rendimiento académico y equilibrar los factores personales, familiares y sociales que influyen en él. Esta experiencia nos motivó a investigar más a fondo qué elementos concretos pueden impactar en las calificaciones de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
 
 El [dataset](https://archive.ics.uci.edu/dataset/320/student+performance) recopila información (durante el año lectivo 2005/2006) detallada sobre el rendimiento de alumnos de dos escuelas secundarias en Portugal, considerando diversas variables. El archivo original se divide en dos partes: una que contiene datos de la asignatura de Matemáticas y otra de Lengua Portuguesa. En este estudio, nos enfocaremos únicamente en el análisis del desempeño en Matemáticas.
 
@@ -147,8 +150,6 @@ datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
        x = 'Clases extra',
        y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() +
   theme(legend.position = "none")
-
-
 ```
 
 Aqui podemos visualizar la tasa de aprobación de estudiantes segun si **pagan clases extra** o no.
@@ -183,27 +184,7 @@ Este gráfico compara la tasa de aprobación de estudiantes con acceso a interne
 -   Los estudiantes con internet tienen una tasa de aprobación de **68.4%**.
 -   Los estudiantes sin internet tienen una tasa de aprobación de **60.6%**.
 
-Esto concluye a que tener acceso a internet, almenos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
-
-```{r}
-#| fig-cap: "Box plot de clasificacion por periodo"
-#| out.width: 100%
-#| out-height: 50%
-datos |>
-    pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
-    labs(title = "Distribución de calificaciones por período",
-         x = "Período",
-         y = "Nota") + 
-  theme_minimal()+ 
-  stat_summary(fun = mean, 
-               geom = "point",
-               shape = 20, size = 3, 
-               color = "black")+
-theme(legend.position = "none") +
-  theme(axis.title.x = element_text(margin = margin(t = 10)))
-```
-
-Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
+Esto concluye a que tener acceso a internet, al menos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
 
 ```{r}
 #| fig-cap: "Box plot de nota final segun tiempo de estudio"
@@ -230,6 +211,26 @@ datos |>
 Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
+#| fig-cap: "Box plot de clasificacion por periodo"
+#| out.width: 100%
+#| out-height: 50%
+datos |>
+    pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
+    labs(title = "Distribución de calificaciones por período",
+         x = "Período",
+         y = "Nota") + 
+  theme_minimal()+ 
+  stat_summary(fun = mean, 
+               geom = "point",
+               shape = 20, size = 3, 
+               color = "black")+
+theme(legend.position = "none") +
+  theme(axis.title.x = element_text(margin = margin(t = 10)))
+```
+
+Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`)
+
+```{r}
 #| fig-cap: "Relación entre G1/G2 y G3"
 #| out.width: 100%
 #| out-height: 50%
@@ -238,6 +239,7 @@ ggplot(datos, aes(x=G1, y=G3)) +
     geom_smooth(method="lm") +
     labs(title="Relación entre primera nota (G1) y nota final (G3)",
          x="G1", y="G3")
+
 ggplot(datos, aes(x=G2, y=G3)) +
     geom_point(alpha=0.6) +
     geom_smooth(method="lm") +
@@ -258,7 +260,7 @@ datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures)
   labs(title = "Distribución de la nota final (G3) según cantidad de cursos reprobados", x = "Cantidad de cursos reprobados (failures)", y = "Nota final") +
   scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
-  theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
+  theme(legend.position = "none") + theme(axis.title.x = element_text(margin = margin(t = 10)))
 
 ```
 
@@ -314,7 +316,7 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   scale_y_continuous(trans = "log10")+
   scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
-  theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
+  theme(legend.position = "none") + theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
 El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
@@ -324,6 +326,8 @@ El gráfico de violín nos da la distribución del número de ausentes (escalada
 Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`) y usaremos como variables predictoras todas menos `G1` y `G2`.
 
 El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
+
+### Random forest de regresión (sin tomar `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -358,7 +362,7 @@ metricas
 
 El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que confirma que, sin considerar `G1` y `G2`, la capacidad predictiva de las demás variables no es muy buena. Este resultado coincide con el comentario de la página original del dataset, que señala que la nota final (`G3`) depende en gran parte de los parciales anteriores.
 
-A continuación haremos un modelo teniendo en cuenta `G1` y `G2`.
+### Random forest de regresión (tomando `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -388,7 +392,9 @@ metricas
 
 El incremento del `R²` de 0.176 a 0.815 muestra claramente que `G1` y `G2` concentran casi todo el poder predictivo del modelo. Sin ellas, las variables restantes no logran predecir la nota final (`G3`) de forma adecuada.
 
-Para indagar un poco más, crearemos otro modelo de random forest pero ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos) y nuestro modelo pasará ahora a un random forest de clasificación.
+Para indagar un poco más, crearemos otro modelo de random forest per**o ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos)** y nuestro modelo pasará ahora a un random forest de clasificación.
+
+### Random forest de clasificación (sin tomar `G1` y `G2`)
 
 ```{r}
 #| out.width: 100%
@@ -421,6 +427,8 @@ Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisi�
 
 Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respuesta siendo binaria (aprobado/no aprobado).
 
+### Random forest de clasificación (tomando `G1` y `G2`)
+
 ```{r}
 #| out.width: 100%
 #| out-height: 50%
@@ -450,6 +458,8 @@ metricas
 
 Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90% y estimando correctamente aproximadamente 9 de cada 10 casos.
 
+### Conclusión:
+
 Hay algo que se observa de forma consistente en todos los modelos: las variables más importantes para predecir la nota final, sin considerar `G1` y `G2`, son principalmente:
 
 -   `failures`: número de cursos reprobados previamente (valores de 0, 1, 2, 3 o 4; donde 4 indica cuatro o más cursos reprobados).
@@ -462,9 +472,9 @@ Hay algo que se observa de forma consistente en todos los modelos: las variables
 
 Para complementar el análisis, se diseñó una aplicación Shiny que permite visualizar los principales resultados del análisis exploratorio de forma interactiva. La aplicación organiza la información en tres pestañas: la primera muestra gráficos de barras, la segunda contiene boxplots y la tercera presenta gráficos de violín, todo esto para brindar una perspectiva más detallada de la distribución de las variables.
 
-El código de la app shiny se encuentra en el repositorio como \<\<app\>\> [y aquí está el link](https://gastonnbar.shinyapps.io/AppShinyCDR/).
+El código de la app shiny se encuentra en el repositorio como \<\<app\>\> [y aquí está el link](https://gastonnbar.shinyapps.io/ShinyAppCDR/).
 
-## Comentarios finales:
+# Comentarios finales:
 
 **Relación entre calificaciones parciales y finales:**\
 En primer lugar, confirmamos que las calificaciones parciales (`G1` y `G2`) explican gran parte del rendimiento final (`G3`). El desempeño del estudiante al inicio y a mitad de año es un indicador fuerte de la nota final. Esto se refleja en la diferencia de `R2` sin `G1` y `G2`, el modelo apenas alcanza un `R2` de 0.18 mientras que al incluirlas sube a 0.81, lo que demuestra su gran peso explicativo.
