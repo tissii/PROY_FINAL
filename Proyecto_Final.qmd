@@ -54,17 +54,17 @@ Información demográfica: edad, género, si vive en lugar urbano o rural.
 
 Contexto familiar: nivel educacional de los padres, categoría laboral de los padres, relación familiar.
 
-Aspectos academicos: tiempo de estudio, inasistencias, notas parciales y finales.
+Aspectos académicos: tiempo de estudio, inasistencias, notas parciales y finales.
 
 Variables socioeconómicas: actividades extracurriculares, apoyo educativo, comportamiento de consumo de alcohol, entre otras.
 
 Este cantidad de variables ofrece la posibilidad de investigar varios factores los cuales pueden tener influencia en el comportamiento escolar y facilita el uso de técnicas de análisis exploratorio y modelado estadístico.
 
-La variable `G3` es la nota final anual. Mientras que `G1` y `G2` corresponden a las notas de primer y segundo período respectivamente.
+La variable `G3` representa la nota final anual, mientras que `G1` y `G2` corresponden a las calificaciones del primer y segundo período.
 
 Para el mejor entendimiento de las variables de calificaciones recién mencionadas dejamos una breve explicación del funcionamiento del sistema de evaluación en estas escuelas portuguesas:
 
-Se adoptan calificaciones de 0 a 20 de escala, donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer período, del segundo período y a la calificación del cierre del curso, correspondientemente.
+Se adoptan calificaciones de 0 a 20 de escala, donde se requiere 10 de calificación mínima para aprobar. El cierre del curso académico se califica a través de tres momentos a lo largo del año escolar, en este dataset, dados por las variables `G1`, `G2` y `G3`, correspondientes a calificación del primer período, del segundo período y a la calificación del cierre del curso, respectivamente.
 
 Es importante mencionar que, una calificación final de 0 podría reflejar que el estudiante no se presentó a clase o a evaluaciones clave. Sin embargo, el dataset no aclara si existe una regla administrativa de 0 en caso de inasistencia o abandono del curso..
 
