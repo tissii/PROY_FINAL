@@ -11,10 +11,9 @@ fig-height: 4
 fig-width: 6
 knitr:
   opts_chunk:
-    fig.path: "D:/facultad/CDR/PROY_FINAL/graficooos"
+    fig.path: "figures/"
+    dev: "png"
 ---
-
-## 
 
 ```{r}
 library(tidyverse)
@@ -319,11 +318,17 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
-Se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **indica que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`. Por este motivo, **decidimos no incluir** `G1` y `G2` como variables explicativas al construir el modelo, además, en la misma página del dataset dice: *'It is more difficult to predict G3 without G2 and `G1`, but **such prediction is much more useful**'*. En base a esto, optamos por evaluar únicamente otras variables para explicar la nota final.
+En el ultimo gráfico se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
+
+Por este motivo, se decidió **construir modelos primeramente sin `G1` y `G2`** como variables explicativas y luego incluirlas para comparar.
+
+Al excluir estas variables obligaremos al modelo a explicar `G3` usando variables externas (familiares, personales, contexto).
+
+Esta idea esta respaldada en la misma página del dataset que dice: [It is more difficult to predict G3 without G2 and G1, but such prediction is much more useful](https://archive.ics.uci.edu/dataset/320/student+performance#:~:text=It%20is%20more%20difficult%20to%20predict%20G3%20without%20G2%20and%20G1%2C%20but%20such%20prediction%20is%20much%20more%20useful%20(see%20paper%20source%20for%20more%20details).).
 
 # Modelo:
 
-Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`) y usaremos como variables predictoras todas menos `G1` y `G2`.
+Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`) y usaremos como variables predictoras todas menos `G1` y `G2` primeramente.
 
 El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
 
