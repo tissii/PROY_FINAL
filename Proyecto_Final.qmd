@@ -328,6 +328,8 @@ Al excluir estas variables obligaremos al modelo a explicar `G3` usando variable
 
 Esta idea está respaldada en la misma página del dataset que dice: [It is more difficult to predict G3 without G2 and G1, but such prediction is much more useful](https://archive.ics.uci.edu/dataset/320/student+performance#:~:text=It%20is%20more%20difficult%20to%20predict%20G3%20without%20G2%20and%20G1%2C%20but%20such%20prediction%20is%20much%20more%20useful%20(see%20paper%20source%20for%20more%20details).).
 
+\newpage
+
 # Modelo:
 
 El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
@@ -399,14 +401,14 @@ saveRDS(modelo, file = "modelo_num_con_g12.rds")
 modelo |> vip()
 ```
 
+\newpage
+
 Aquí un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
 resultados |> head() |> rename(Predicción = .pred) |> kable(caption = "Predicciones del modelo")
 ```
-
-\newpage
 
 Y las métricas correspondientes:
 
@@ -439,14 +441,14 @@ saveRDS(modelo, file = "modelo_cat_sin_g12.rds")
 modelo |> vip()
 ```
 
+\newpage
+
  A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
 resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
 ```
-
-\newpage
 
 Y las métricas correspondientes:
 
@@ -459,6 +461,8 @@ metricas |> select(-.estimator) |>  rename(Métrica = .metric,
 Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisión del 73 %. Al transformar el problema en uno de clasificación binaria (Aprobado/No aprobado), el modelo logra una capacidad predictiva considerablemente mejor (aproximadamente 7 de cada 10 son predecidas correctamente).
 
 Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respuesta siendo binaria (aprobado/no aprobado).
+
+\newpage
 
 ### Random forest de clasificación (tomando `G1` y `G2`)
 
