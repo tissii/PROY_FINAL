@@ -284,7 +284,7 @@ server <- function(input, output) {
         rename(Escuela = school, Sexo = sex, Edad = age, Prediccion = .pred_class)
     } else {tabla <- resultado_seleccionado |>
         mutate(sex = recode(sex, "F" = "Femenino", "M" = "Masculino")) |>
-        rename(Escuela = school, Sexo = sex, Edad = age, Prediccion = .pred, Nota_Final = G3)}
+        rename(Escuela = school, Sexo = sex, Edad = age, Prediccion = .pred, "Nota Final" = G3)}
     datatable(tabla, options = list(pageLength = 10))
     })
   output$vip_plot <- renderPlot({modelo_seleccionado <- switch(input$modelo_vip,
