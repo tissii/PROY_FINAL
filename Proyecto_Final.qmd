@@ -35,6 +35,8 @@ A partir de este caso especifico, buscamos identificar posibles relaciones entre
 
 Esperamos que este trabajo sirva como un ejemplo de la aplicación de herramientas de ciencia de datos en el ámbito educativo y como un punto de partida para reflexionar sobre factores que podrían ser significativos en contextos similares.
 
+\newpage
+
 # Datos:
 
 ```{r}
@@ -66,17 +68,19 @@ Se adoptan calificaciones de 0 a 20 de escala, donde se requiere 10 de calificac
 
 Es importante mencionar que, una calificación final de 0 podría reflejar que el estudiante no se presentó a clase o a evaluaciones clave. Sin embargo, el dataset no aclara si existe una regla administrativa de 0 en caso de inasistencia o abandono del curso..
 
+\newpage
+
 # Análisis Exploratorio:
 
 El objetivo de este análisis exploratorio es determinar si las variables que, en un primer momento, seleccionamos por considerarlas explicativas de la nota final (`G3`), realmente cumplen con esa función.
 
 ```{r}
-#| fig-cap: "Estudiantes aprobados vs no aprobados"
+#| fig-cap: "Estudiantes aprobados vs no aprobados."
 #| out.width: 100%
 #| out-height: 50%
 datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
     ggplot(aes(x = Estado, fill = Estado)) + geom_bar(alpha = 0.7) +
-    geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) + scale_fill_brewer(palette = "Set2")+ labs(title = "Estudiantes aprobados vs no aprobados", x = "Estado", y = "Cantidad") +
+    geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5) + scale_fill_brewer(palette = "Set2")+ labs(x = "Estado", y = "Cantidad") +
     theme_minimal() +
    ylim(0, 300) +
   theme(legend.position = "none")
@@ -85,10 +89,10 @@ datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
 Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (`G3`). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
 
 ```{r}
-#| fig-cap: "Sexo"
+#| fig-cap: "Gráfico de barras porcentaje de aprobación según sexo."
 #| out.width: 100% 
 #| out-height: 50%
-datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(title = "Porcentaje de aprobación por sexo", x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
+datos |> mutate(sex= case_when(sex=='F'~'Femenino', sex=='M'~'Masculino')) |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>   group_by(sex) |> summarise(aprobados = sum(Estado == "Aprobado"), total = n(), porcentaje = aprobados / total * 100) |> ggplot(aes(x = sex, y = porcentaje, fill = sex)) +   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje, 1), "%")), vjust = -0.5) +   scale_fill_brewer(palette = "Set2") +   labs(x = "Sexo", y = "Porcentaje de aprobación") + theme_minimal() + ylim(0, 100) + theme(legend.position = "none")
 
 ```
 
@@ -99,7 +103,7 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
 **70.6%** de los estudiantes masculinos aprueban, mientras que **63.9%** de las estudiantes femeninas aprueban.
 
 ```{r}
-#| fig-cap: "Educación de la madre"
+#| fig-cap: "Gráfico de barras porcentaje de aprobación según educación de la madre."
 #| out.width: 100%
 #| out-height: 50%
  datos |> mutate(Medu= case_when(Medu=='0'~'No educación',
@@ -118,8 +122,7 @@ En este grupo de datos, los estudiantes masculinos tienen una tasa de aprobació
   geom_text(aes(label = paste0(round(porcentaje, 1), "%")),
     vjust = -0.5) +
   scale_fill_brewer(palette = "Set2") +
-  labs(title = "Porcentaje de aprobación segun nivel educativo de la madre",
-    x = "Nivel educativo de la madre",
+  labs(x = "Nivel educativo de la madre",
     y = "Porcentaje de aprobación") +
   theme_minimal() + theme(axis.title.x = element_text(margin = margin(t = 10))) +
   ylim(0, 100) +
@@ -134,7 +137,7 @@ Compara el porcentaje de estudiantes que aprueban (nota final suficiente) en fun
 -   Llama la atención que el grupo “sin educación” **(66.7%**) no es el más bajo: supera a primaria y se parece a secundaria y 5to-9no grado.
 
 ```{r}
-#| fig-cap: "Clases extra pagas"
+#| fig-cap: "Gráfico de barras porcentaje de aprobación según si toma clases extra pagas."
 #| out.width: 100%
 #| out-height: 50%
 datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
@@ -145,8 +148,7 @@ datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),
   geom_col(alpha = 0.7) +
   geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
   scale_fill_brewer(palette = "Set2") +
-  labs(title = 'Porcentaje de aprobación según clases extra',
-       x = 'Clases extra',
+  labs(x = 'Clases extra',
        y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() +
   theme(legend.position = "none")
 ```
@@ -159,7 +161,7 @@ Aqui podemos visualizar la tasa de aprobación de estudiantes segun si **pagan c
 Los estudiantes que reciben clases extra tienen más probabilidades de aprobar que quienes no lo hacen. Este resultado respalda la idea de que el refuerzo académico adicional (clases particulares o tutorías) tiene un impacto positivo en el rendimiento escolar.
 
 ```{r}
-#| fig-cap: "Acceso a internet"
+#| fig-cap: "Gráfico de barras porcentaje de aprobación según si tiene acceso a internet."
 #| out.width: 100%
 #| out-height: 50%
 datos |>
@@ -172,9 +174,7 @@ datos |>
   ggplot(aes(x = internet, y = porcentaje_aprobacion, fill = internet)) +
   geom_col(alpha = 0.7) + geom_text(aes(label = paste0(round(porcentaje_aprobacion, 1), "%")), vjust = -0.5, size = 3.5) +
   scale_fill_brewer(palette = "Set2") +
-  labs(title = 'Porcentaje de aprobación según acceso a internet',
-    x = 'Tiene acceso a internet',
-    y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() + theme(axis.title.x = element_text(margin = margin(t = 10))) + theme(legend.position = "none")
+  labs(x = 'Tiene acceso a internet', y = 'Porcentaje de aprobación') + ylim(0, 100) + theme_minimal() + theme(axis.title.x = element_text(margin = margin(t = 10))) + theme(legend.position = "none")
 
 ```
 
@@ -186,7 +186,7 @@ Este gráfico compara la tasa de aprobación de estudiantes con acceso a interne
 Esto concluye a que tener acceso a internet, al menos en esta investigación, está asociado a una mayor probabilidad de aprobar, la diferencia es de **7.8** puntos porcentuales.
 
 ```{r}
-#| fig-cap: "Box plot de nota final segun tiempo de estudio"
+#| fig-cap: "Box plot de nota final según tiempo de estudio."
 #| out.width: 100%
 #| out-height: 50%
 datos |>
@@ -194,12 +194,7 @@ datos |>
                                   labels = c("<2 horas", "2-5 horas", "5-10 horas", ">10 horas"))) |>
   ggplot(aes(x = studytime, y = G3, fill = studytime)) +
   geom_boxplot(alpha = 0.8) +
-  labs(
-    title = "Nota final (G3) según tiempo de estudio semanal",
-    x = "Tiempo de estudio",
-    y = "Nota final",
-    fill = "Tiempo de estudio"
-  ) +
+  labs(x = "Tiempo de estudio", y = "Nota final", fill = "Tiempo de estudio") +
   theme_minimal() +
   scale_fill_brewer(palette = "Pastel2") +
   theme(legend.position = "none") +
@@ -210,13 +205,12 @@ datos |>
 Más horas de estudio tienden a relacionarse con mejores calificaciones finales, especialmente hasta el rango de 5-10 horas semanales. Estudiar más de 10 horas no garantiza mejores resultados, lo que sugiere que otros factores (como la calidad del estudio, apoyo docente o factores personales) también juegan un papel importante. Además, en todos los grupos hay alta variabilidad y valores bajos (0), lo que reafirma esa sugerencia.
 
 ```{r}
-#| fig-cap: "Box plot de clasificacion por periodo"
+#| fig-cap: "Box plot de calificación por periodo."
 #| out.width: 100%
 #| out-height: 50%
 datos |>
     pivot_longer(cols = c(G1, G2, G3), names_to = "Periodo", values_to = "Nota") |> ggplot(aes(x = Periodo, y = Nota, fill = Periodo)) + geom_boxplot(alpha=0.7) + scale_fill_brewer(palette = "Paired")+
-    labs(title = "Distribución de calificaciones por período",
-         x = "Período",
+    labs(x = "Período",
          y = "Nota") + 
   theme_minimal()+ 
   stat_summary(fun = mean, 
@@ -227,15 +221,15 @@ theme(legend.position = "none") +
   theme(axis.title.x = element_text(margin = margin(t = 10)))
 ```
 
-Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`)
+Al observar la primera gráfica, vemos que la mediana y la distribución de las calificaciones de `G1`, `G2` y `G3` son bastante similares. Es decir, como grupo, los estudiantes no muestran un cambio drástico (ni mejora ni empeora fuertemente) a lo largo del año escolar. Por lo que las notas del primer y segundo periodo (`G1` y `G2`) pueden predecir bastante bien la nota final (`G3`).
 
 ```{r}
-#| fig-cap: "Violin plot de nota final segun cantidad de cursos reprobados"
+#| fig-cap: "Violin plot de nota final según cantidad de cursos reprobados."
 #| out.width: 100%
 #| out-height: 50%
 
 datos |>  ggplot(aes(x = as.factor(failures), y = G3, fill = as.factor(failures))) + geom_violin(trim = FALSE, alpha = 0.7) +
-  labs(title = "Distribución de la nota final (G3) según cantidad de cursos reprobados", x = "Cantidad de cursos reprobados (failures)", y = "Nota final") +
+  labs(x = "Cantidad de cursos reprobados (failures)", y = "Nota final") +
   scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
   theme(legend.position = "none") + theme(axis.title.x = element_text(margin = margin(t = 10)))
@@ -251,7 +245,7 @@ Para las puntuaciones de `failure` = 2 o 3, la distribución es mucho más dispe
 El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un buen predictor de bajo rendimiento final.
 
 ```{r}
-#| fig-cap: "Violin plot de nota final segun tiempo de viaje"
+#| fig-cap: "Violin plot de nota final según tiempo de viaje."
 #| out.width: 100%
 #| out-height: 50%
 
@@ -262,7 +256,7 @@ El gráfico confirma el resultado esperado: no aprobar cursos anteriores es un b
                                 traveltime == 4 ~ '>1 hora'), 
          traveltime = factor(traveltime, levels = c('<15 min', '15-30 min', '30-60 min', '>1 hora'))) |> ggplot(aes(x = traveltime, y = G3, fill = traveltime)) +
   geom_violin(trim = FALSE, alpha = 0.7) +
-  labs(title = 'Distribución de la nota final (G3) según tiempo de viaje a la escuela', x = 'Tiempo de viaje', y = 'Nota final') +
+  labs(x = 'Tiempo de viaje', y = 'Nota final') +
   scale_fill_brewer(palette = "Set1") +
   theme_minimal() +
   theme(legend.position = "none")+theme(axis.title.x = element_text(margin = margin(t = 10)))
@@ -279,7 +273,7 @@ Los grupos con trayectos cortos (\<15 min) o medianos (15-60 min) presentan dist
 Estas conclusiones nos generó una nueva pregunta; ¿Más tiempo de viaje es indicador de mayor cantidad de faltas?
 
 ```{r}
-#| fig-cap: "Violin plot de ausencias (escala log) segun tiempo de viaje"
+#| fig-cap: "Violin plot de ausencias (escala log) según tiempo de viaje."
 #| out.width: 100%
 #| out-height: 50%
  datos |>  mutate(traveltime = case_when(traveltime == 1 ~ '<15 min',
@@ -288,8 +282,7 @@ Estas conclusiones nos generó una nueva pregunta; ¿Más tiempo de viaje es ind
                                              traveltime == 4 ~ '>1 hora'),traveltime = factor(traveltime, levels = c("<15 min", "15-30 min", "30-60 min", ">1 hora"))) |> 
 ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
   geom_violin(trim = FALSE, alpha = 0.7) +
-  labs(title = "Distribución de ausencias según tiempo de viaje",
-       x = "Tiempo de viaje",
+  labs(x = "Tiempo de viaje",
        y = "Número de ausencias en logaritmo") +
   scale_y_continuous(trans = "log10")+
   scale_fill_brewer(palette = "Set2") +
@@ -299,36 +292,44 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
 
 El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
 
+## Relación entre G1, G2 y G3:
+
 ```{r}
-#| fig-cap: "Relación entre G1/G2 y G3"
+#| fig-cap: "Relación entre G1 y G3."
 #| out.width: 100%
 #| out-height: 50%
 ggplot(datos, aes(x=G1, y=G3)) +
     geom_point(alpha=0.6) +
     geom_smooth(method="lm") +
-    labs(title="Relación entre primera nota (G1) y nota final (G3)",
-         x="G1", y="G3")
+    labs(x="G1", y="G3")
 
+```
+
+```{r}
+#| fig-cap: "Relación entre G2 y G3."
+#| out.width: 100%
+#| out-height: 50%
 ggplot(datos, aes(x=G2, y=G3)) +
     geom_point(alpha=0.6) +
     geom_smooth(method="lm") +
-    labs(title="Relación entre segunda nota (G2) y nota final (G3)",
-         x="G2", y="G3")
+    labs(x="G2", y="G3")
 ```
 
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
-En el ultimo gráfico se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
+En la `figura 11`, se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
 
 Por este motivo, se decidió **construir modelos sin `G1` y `G2`** como variables explicativas y luego incluirlas para comparar.
 
 Al excluir estas variables obligaremos al modelo a explicar `G3` usando variables externas (familiares, personales, contexto).
 
-Esta idea esta respaldada en la misma página del dataset que dice: [It is more difficult to predict G3 without G2 and G1, but such prediction is much more useful](https://archive.ics.uci.edu/dataset/320/student+performance#:~:text=It%20is%20more%20difficult%20to%20predict%20G3%20without%20G2%20and%20G1%2C%20but%20such%20prediction%20is%20much%20more%20useful%20(see%20paper%20source%20for%20more%20details).).
+Esta idea está respaldada en la misma página del dataset que dice: [It is more difficult to predict G3 without G2 and G1, but such prediction is much more useful](https://archive.ics.uci.edu/dataset/320/student+performance#:~:text=It%20is%20more%20difficult%20to%20predict%20G3%20without%20G2%20and%20G1%2C%20but%20such%20prediction%20is%20much%20more%20useful%20(see%20paper%20source%20for%20more%20details).).
 
 # Modelo:
 
 El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
+
+En un primer paso haremos un split con 80% para train y 20% para test, luego crearemos el modelo y lo entrenaremos con los datos del train, para en un ultimo paso predecir sobre los datos del test y hacer las metricas correspondientes.
 
 Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`).
 
@@ -343,6 +344,7 @@ library(rsample)
 library(tidymodels)
 library(ranger)
 library(vip)
+library(knitr)
 datos2 = datos |> select(-G1,-G2)
 set.seed(100725)
 split = initial_split(datos2, prop = 0.8)
@@ -353,21 +355,26 @@ saveRDS(modelo, file = "modelo_num_sin_g12.rds")
 modelo |> vip() 
 ```
 
+\newpage
+
 A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
-resultados |> head()
+resultados |> head() |> rename(Predicción = .pred) |> kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=G3, estimate=.pred)
-metricas
+metricas |> select(-.estimator) |>  rename(Métrica = .metric,
+    Valor = .estimate) |> kable(caption = "Métricas del modelo")
 ```
 
 El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que confirma que, sin considerar `G1` y `G2`, la capacidad predictiva de las demás variables no es muy buena. Este resultado coincide con el comentario de la página original del dataset, que señala que la nota final (`G3`) depende en gran parte de los parciales anteriores.
+
+\newpage
 
 ### Random forest de regresión (tomando `G1` y `G2`)
 
@@ -389,14 +396,17 @@ Aquí un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
-resultados |> head()
+resultados |> head() |> rename(Predicción = .pred) |> kable(caption = "Predicciones del modelo")
 ```
+
+\newpage
 
 Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=G3, estimate=.pred)
-metricas
+metricas |> select(-.estimator) |>  rename(Métrica = .metric,
+    Valor = .estimate) |> kable(caption = "Métricas del modelo")
 ```
 
 El incremento del `R²` de 0.176 a 0.815 muestra claramente que `G1` y `G2` concentran casi todo el poder predictivo del modelo. Sin ellas, las variables restantes no logran predecir la nota final (`G3`) de forma adecuada.
@@ -422,14 +432,15 @@ modelo |> vip()
 
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
-resultados |> head()
+resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
-metricas
+metricas |> select(-.estimator) |>  rename(Métrica = .metric,
+    Valor = .estimate) |> kable(caption = "Métricas del modelo")
 ```
 
 Se observa una gran mejora en el rendimiento del modelo, alcanzando una precisión del 73 %. Al transformar el problema en uno de clasificación binaria (Aprobado/No aprobado), el modelo logra una capacidad predictiva considerablemente mejor (aproximadamente 7 de cada 10 son predecidas correctamente).
@@ -455,14 +466,17 @@ A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
-resultados |> head()
+resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
 ```
+
+\newpage
 
 Y las métricas correspondientes:
 
 ```{r}
 metricas = metrics(resultados, truth=Estado, estimate=.pred_class)
-metricas
+metricas |> select(-.estimator) |>  rename(Métrica = .metric,
+    Valor = .estimate) |> kable(caption = "Métricas del modelo")
 ```
 
 Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90% y estimando correctamente aproximadamente 9 de cada 10 casos.
@@ -507,3 +521,27 @@ Cambiar el enfoque a un modelo de clasificación (aprobado/no aprobado) permiti�
 **Incluir variables complementarias:** incorporar nuevos factores como características del entorno escolar por ejemplo la calidad docente, infraestructura, recursos. También aspectos psicológicos como motivación, estrés del estudiante.
 
 **Realizar estudios más extensos en el tiempo:** seguir a los MISMOS estudiantes a lo largo de varios años o en otras varias materias para observar la evolución del rendimiento (en este caso, contábamos con datos de otra asignatura que era lengua portuguesa, pero no era posible identificar a los mismos estudiantes en ambas materias, por lo que no se pudo relacionar la información individual de cada uno entre asignaturas).
+
+# Paquetes utilizados:
+
+[Wickham, Hadley. 2023. Tidyverse: Easily Install and Load the Tidyverse.](https://CRAN.R-project.org/package=tidyverse.)
+
+[Wickham, Hadley. 2023. Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics.](https://CRAN.R-project.org/package=ggplot2)
+
+[Allaire, J. J., et al. 2023. Here: A Simpler Way to Find Your Files.](https://CRAN.R-project.org/package=here)
+
+[Wickham, Hadley, and Jennifer Bryan. 2023. Readxl: Read Excel Files.](https://CRAN.R-project.org/package=readxl)
+
+[Wickham, Hadley. 2023. Forcats: Tools for Working with Categorical Variables (Factors).](https://CRAN.R-project.org/package=forcats)
+
+[Xie, Yihui. 2023. Knitr: A General-Purpose Package for Dynamic Report Generation in R.](https://CRAN.R-project.org/package=knitr)
+
+[Neuwirth, Erich. 2022. RColorBrewer: ColorBrewer Palettes.](https://CRAN.R-project.org/package=RColorBrewer)
+
+[Kuhn, Max, and Hadley Wickham. 2023. Rsample: General Resampling Infrastructure.](https://CRAN.R-project.org/package=rsample)
+
+[Kuhn, Max, and Hadley Wickham. 2023. Tidymodels: Easily Install and Load the Tidymodels Packages.](https://CRAN.R-project.org/package=tidymodels)
+
+[Wright, Marvin N., and Andreas Ziegler. 2023. Ranger: A Fast Implementation of Random Forests.](https://CRAN.R-project.org/package=ranger)
+
+[Greenwell, Brandon M., and Bradley C. Boehmke. 2023. Vip: Variable Importance Plots.](https://CRAN.R-project.org/package=vip)
