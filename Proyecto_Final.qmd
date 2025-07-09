@@ -27,7 +27,7 @@ library(RColorBrewer)
 
 # Introducción:
 
-Como estudiantes, sabemos por experiencia propia lo dificil que puede ser mantener un buen rendimiento académico y equilibrar los factores personales, familiares y sociales que influyen en él. Esta experiencia nos motivó a investigar más a fondo qué elementos concretos pueden impactar en las calificaciones de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
+Como estudiantes, sabemos por experiencia propia lo difícil que puede ser mantener un buen rendimiento académico y equilibrar los factores personales, familiares y sociales que influyen en él. Esta experiencia nos motivó a investigar más a fondo qué elementos concretos pueden impactar en las calificaciones de los estudiantes de secundaria, utilizando el conjunto de datos disponible en el portal **UCI Machine Learning Repository.**
 
 El [dataset](https://archive.ics.uci.edu/dataset/320/student+performance) recopila información (durante el año lectivo 2005/2006) detallada sobre el rendimiento de alumnos de dos escuelas secundarias en Portugal, considerando diversas variables. El archivo original se divide en dos partes: una que contiene datos de la asignatura de Matemáticas y otra de Lengua Portuguesa. En este estudio, nos enfocaremos únicamente en el análisis del desempeño en Matemáticas.
 
