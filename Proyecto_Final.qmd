@@ -367,8 +367,9 @@ modelo |> vip()
 A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
-resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
-resultados |> head() |> rename(Predicción = .pred) |> kable(caption = "Predicciones del modelo")
+resultados = test |> select(school,sex,age,G3) |> bind_cols(predict(modelo, test))
+saveRDS(resultados, file = "resultado_modelo_num_sin_g12.rds")
+resultados |> head() |> rename(Predicción = .pred) |> select(Predicción,G3) |>  kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
@@ -406,8 +407,9 @@ modelo |> vip()
 Aquí un pantallazo de la tabla de predicción:
 
 ```{r}
-resultados = test |> select(G3) |> bind_cols(predict(modelo, test)) 
-resultados |> head() |> rename(Predicción = .pred) |> kable(caption = "Predicciones del modelo")
+resultados = test |> select(school,sex,age,G3) |> bind_cols(predict(modelo, test))
+saveRDS(resultados, file = "resultado_modelo_num_con_g12.rds")
+resultados |> head() |> rename(Predicción = .pred) |> select(Predicción,G3) |>  kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
@@ -446,8 +448,9 @@ modelo |> vip()
  A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
-resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
-resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
+resultados = test |> select(school,sex,age,Estado) |> bind_cols(predict(modelo, test))
+saveRDS(resultados, file = "resultado_modelo_cat_sin_g12.rds")
+resultados |> head() |> rename(Predicción = .pred_class) |> select(Predicción,Estado) |>  kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
@@ -486,8 +489,9 @@ modelo |> vip()
 A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
-resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
-resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
+resultados = test |> select(school,sex,age,Estado) |> bind_cols(predict(modelo, test))
+saveRDS(resultados, file = "resultado_modelo_cat_con_g12.rds")
+resultados |> head() |> rename(Predicción = .pred_class) |> select(Predicción,Estado) |> kable(caption = "Predicciones del modelo")
 ```
 
 Y las métricas correspondientes:
