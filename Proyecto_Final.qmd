@@ -320,7 +320,7 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 En el ultimo gráfico se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
 
-Por este motivo, se decidió **construir modelos primeramente sin `G1` y `G2`** como variables explicativas y luego incluirlas para comparar.
+Por este motivo, se decidió **construir modelos sin `G1` y `G2`** como variables explicativas y luego incluirlas para comparar.
 
 Al excluir estas variables obligaremos al modelo a explicar `G3` usando variables externas (familiares, personales, contexto).
 
