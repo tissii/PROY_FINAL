@@ -86,7 +86,7 @@ datos|> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado")) |>
   theme(legend.position = "none")
 ```
 
-Este gráfico de barras compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (`G3`). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
+Este gráfico de barra compara la cantidad de estudiantes que aprobaron con los que no aprobaron, según la nota final (`G3`). Aunque hay una mayoría que logra aprobar, **un 33% aproximadamente no lo logra** (130 de 395 estudiantes en total).
 
 ```{r}
 #| fig-cap: "Gráfico de barras porcentaje de aprobación según sexo."
@@ -292,12 +292,15 @@ ggplot(aes(x = traveltime, y = absences, fill = traveltime)) +
 
 El gráfico de violín nos da la distribución del número de ausentes (escalada logarítmicamente) con el tiempo de viaje del estudiante en cuatro intervalos: menos de 15 minutos, entre 15–30 minutos, entre 30–60 minutos y más de 1 hora. A gran escala se observa que quienes residen a mayor distancia (\>1 hora) tienden a acumular más ausencias con una distribución concentrada en valores más altos, también parece haber mas densidad en la parte superior del violín, indicando que hay más individuos con altas ausencias en este intervalo, mientras quienes viven a poca distancia (\<15 min) suelen tener menos ausencias y presentan menor dispersión. Los intervalos intermedios (15–30 min y entre 30–60 min) muestran mayor variabilidad, lo que sugiere que hay otros factores que influyen en el ausentismo. En conclusión, se identifica una relación positiva entre mayor tiempo de viaje y mayor tendencia a acumular ausencias, si bien este patrón sugiere que el tiempo de viaje podría estar asociado con mayores niveles de ausentismo, otros factores pueden influir y la relación no es necesariamente causal.
 
+\newpage
+
 ## Relación entre G1, G2 y G3:
 
 ```{r}
 #| fig-cap: "Relación entre G1 y G3."
 #| out.width: 100%
 #| out-height: 50%
+#| label: fig-g1g2
 ggplot(datos, aes(x=G1, y=G3)) +
     geom_point(alpha=0.6) +
     geom_smooth(method="lm") +
@@ -317,7 +320,7 @@ ggplot(datos, aes(x=G2, y=G3)) +
 
 #### JUSTIFICACION DE POR QUE SACAMOS G1 Y G2 DE VARIABLES PREDICTORAS:
 
-En la `figura 11`, se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
+En la @fig-g1g2, se observa una relación lineal positiva clara entre la primera calificación parcial (`G1`) y la calificación final (`G3`), lo que **confirma que el rendimiento inicial de los estudiantes es un buen predictor de su rendimiento final.** La baja dispersión alrededor de la línea de tendencia refuerza la idea de que `G1` es una variable fuertemente predictiva. Lo mismo ocurre con `G2`.
 
 Por este motivo, se decidió **construir modelos sin `G1` y `G2`** como variables explicativas y luego incluirlas para comparar.
 
@@ -329,7 +332,7 @@ Esta idea está respaldada en la misma página del dataset que dice: [It is more
 
 El modelo elegido es Random Forest ya que nos parece un excelente modelo predictor. En este contexto usaremos una cantidad de 1000 árboles. No realizamos ningún podado.
 
-En un primer paso haremos un split con 80% para train y 20% para test, luego crearemos el modelo y lo entrenaremos con los datos del train, para en un ultimo paso predecir sobre los datos del test y hacer las metricas correspondientes.
+En un primer paso realizaremos un split, un 80 % para entrenamiento (*train*) y un 20 % para prueba (*test*). Luego, crearemos el modelo y lo entrenaremos con los datos del train. A continuación, mostraremos las variables más importantes para predecir `G3` mediante la función `vip()`. Finalmente, realizaremos las predicciones sobre los datos del test y calcularemos las métricas correspondientes.
 
 Como ya mencionamos anteriormente, nuestra variable objetivo o de respuesta \~y\~ es la nota final (`G3`).
 
@@ -338,8 +341,10 @@ Para este primer modelo, usaremos como variables predictoras todas menos `G1` y 
 ### Random forest de regresión (sin tomar `G1` y `G2`)
 
 ```{r}
+#| fig-cap: "Importancia de las variables para predecir G3"
 #| out.width: 100%
 #| out-height: 50%
+#| label: fig-modelo1
 library(rsample)
 library(tidymodels)
 library(ranger)
@@ -381,8 +386,10 @@ El `R²` obtenido en el conjunto de testeo fue de aproximadamente 0.18, lo que c
 Ahora contrastaremos agregando `G1` y `G2` como variables predictoras.
 
 ```{r}
+#| fig-cap: "Importancia de las variables para predecir G3"
 #| out.width: 100%
 #| out-height: 50%
+#| label: fig-modelo2
 set.seed(100725)
 split = initial_split(datos, prop = 0.8)
 train = training(split)
@@ -413,11 +420,15 @@ El incremento del `R²` de 0.176 a 0.815 muestra claramente que `G1` y `G2` conc
 
 Para indagar un poco más, crearemos otro modelo de random forest per**o ajustando nuestra variable `G3` de una numerica de 0-20 a una categorica de no aprobado (\<10 puntos) y aprobado (\>= 10 puntos)** y nuestro modelo pasará ahora a un random forest de clasificación.
 
+\newpage
+
 ### Random forest de clasificación (sin tomar `G1` y `G2`)
 
 ```{r}
+#| fig-cap: "Importancia de las variables para predecir G3"
 #| out.width: 100%
 #| out-height: 50%
+#| label: fig-modelo3
 set.seed(100725)
 datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Estado=as.factor(Estado)) |> select(-G1, -G2, -G3) 
 split = initial_split(datos3, prop = 0.8, strata=Estado)
@@ -435,6 +446,8 @@ resultados = test |> select(Estado) |> bind_cols(predict(modelo, test))
 resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
 ```
 
+\newpage
+
 Y las métricas correspondientes:
 
 ```{r}
@@ -450,8 +463,10 @@ Ahora consideraremos tambien a `G1` y `G2` pero manteniendo la variable de respu
 ### Random forest de clasificación (tomando `G1` y `G2`)
 
 ```{r}
+#| fig-cap: "Importancia de las variables para predecir G3"
 #| out.width: 100%
 #| out-height: 50%
+#| label: fig-modelo4
 set.seed(100725)
 datos3 = datos |> mutate(Estado = if_else(G3 > 9, "Aprobado", "No aprobado"),Estado=as.factor(Estado)) |> select(-G3) 
 split = initial_split(datos3, prop = 0.8, strata=Estado)
@@ -462,14 +477,14 @@ saveRDS(modelo, file = "modelo_cat_con_g12.rds")
 modelo |> vip()
 ```
 
+\newpage
+
 A continuación un pantallazo de la tabla de predicción:
 
 ```{r}
 resultados = test |> select(Estado) |> bind_cols(predict(modelo, test)) 
 resultados |> head() |> rename(Predicción = .pred_class) |> kable(caption = "Predicciones del modelo")
 ```
-
-\newpage
 
 Y las métricas correspondientes:
 
@@ -479,17 +494,15 @@ metricas |> select(-.estimator) |>  rename(Métrica = .metric,
     Valor = .estimate) |> kable(caption = "Métricas del modelo")
 ```
 
-Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90% y estimando correctamente aproximadamente 9 de cada 10 casos.
+Vemos que el modelo mejora notablemente una vez más, alcanzando una precisión del 90%, o sea, estimando correctamente aproximadamente 9 de cada 10 casos.
 
 ### Conclusión:
 
 Hay algo que se observa de forma consistente en todos los modelos: las variables más importantes para predecir la nota final, sin considerar `G1` y `G2`, son principalmente:
 
--   `failures`: número de cursos reprobados previamente (valores de 0, 1, 2, 3 o 4; donde 4 indica cuatro o más cursos reprobados).
+-   `failures`: número de cursos reprobados previamente (valores de 0, 1, 2, 3 o 4; donde 4 indica cuatro o más cursos reprobados), y `absences`: número de inasistencias registradas (de 0 a 93). Su importancia para predecir `G3` se intercambia según el modelo, tanto en la @fig-modelo1 como en la @fig-modelo2 `absences` parece más importante para predecir `G3` que `failures`, pero una vez pasamos el modelo de regresión a clasificación, @fig-modelo3 y @fig-modelo4 muestra que `failure` toma mayor importancia que `absences`.
 
--   `absences`: número de inasistencias registradas (de 0 a 93).
-
--   `goout` y `age`: estas variables suelen intercambiarse en el ranking de importancia según el modelo. `goout` indica la frecuencia de salidas con amigos (de 1 = muy baja a 5 = muy alta), mientras que `age` corresponde a la edad del estudiante (de 15 a 22 años).
+-   `goout` y `age`: `goout` indica la frecuencia de salidas con amigos (de 1 = muy baja a 5 = muy alta), mientras que `age` corresponde a la edad del estudiante (de 15 a 22 años). Estas variables también suelen intercambiarse en el ranking de importancia según el modelo. En la @fig-modelo1 `goout` toma mayor importancia que `age`, mientras que en la @fig-modelo2 `age` está por sobre `goout`. Tanto en la @fig-modelo3 como la @fig-modelo4 `goout` parece más importante para predecir a `G3` que `age`. Cabe recalcar que esta diferencia es pequeña, pero nos pareció interesante mencionarla.
 
 # Aplicación Shiny:
 
